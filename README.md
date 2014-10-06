@@ -2,6 +2,9 @@
 
 These are mostly ready to run. The only thing you need to change is the `rss_file` line, to indicate where the feed should be saved.
 
+### pennyarcade
+Generates RSS feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, including the image.
+
 ### shortoftheweek
 Generates RSS feed from [Short of the Week](http://shortoftheweek.com) posts, but links directly to the video.
 
