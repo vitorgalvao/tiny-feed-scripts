@@ -8,6 +8,9 @@ Generates RSS feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, i
 ### shortoftheweek
 Generates RSS feed from [Short of the Week](http://shortoftheweek.com) posts, but links directly to the video.
 
+### smashingnewsletter
+Generates RSS feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-smashing-newsletter/) posts.
+
 ### thatsinhuman
 Generates the RSS feed used in [Ty Halley](https://twitter.com/tyhalley)’s [That’s Inhuman](http://thatsinhuman.com/) comic.
 
