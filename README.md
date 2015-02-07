@@ -5,9 +5,6 @@ These are mostly ready to run. The only thing you need to change is the `rss_fil
 ### pennyarcade
 Generates RSS feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, including the image.
 
-### shortoftheweek
-Generates RSS feed from [Short of the Week](http://shortoftheweek.com) posts, but links directly to the video.
-
 ### smashingnewsletter
 Generates RSS feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-smashing-newsletter/) posts.
 
