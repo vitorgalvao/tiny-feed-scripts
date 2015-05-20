@@ -21,7 +21,7 @@ if !File.file?(rss_file)
       xml.channel {
         xml.title "Open Culture’s Creativity Category"
         xml.link site_page
-        xml.description "RSS feed of just the post in the creativity category"
+        xml.description "RSS feed of just the posts in the creativity category"
       }
     }
   end
