@@ -2,6 +2,9 @@
 
 These are mostly ready to run. The only thing you need to change is the `rss_file` line, to indicate where the feed should be saved.
 
+### opencultureanimation
+Generates RSS feed to [Open Culture](http://www.openculture.com/)’s posts in the [“Animation” category](http://www.openculture.com/category/animation-2).
+
 ### openculturecreativity
 Generates RSS feed to [Open Culture](http://www.openculture.com/)’s posts in the [“Creativity” category](http://www.openculture.com/category/creativity-2).
 
