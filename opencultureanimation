@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+require 'open-uri'
+require 'nokogiri'
+
+site_page = "http://www.openculture.com/category/animation-2"
+rss_file = ENV['HOME'] + "/public_html/vitorgalvao/rss/opencultureanimation.rss"
+
+# get new article
+page = Nokogiri::HTML(open(site_page))
+article_link = page.at('.contenttitle h1 > a').attr('href')
+article_page = Nokogiri::HTML(open(article_link))
+article_title = article_page.at('h1').text
+article_description = article_page.at('.entry').inner_html
+
+# create new feed (if it doesn't exist)
+# or prepare existing one (checking if retried item is new)
+if !File.file?(rss_file)
+  tmp_feed = Nokogiri::XML::Builder.new do |xml|
+    xml.rss("version" => "2.0") {
+      xml.channel {
+        xml.title "Open Culture’s Animation Category"
+        xml.link site_page
+        xml.description "RSS feed of just the posts in the animation category"
+      }
+    }
+  end
+  rss_feed = Nokogiri::XML(tmp_feed.to_xml)
+else
+  rss_feed = Nokogiri::XML(File.open(rss_file))
+
+  # abort if most recent item link is the same as the newly retrieved one
+  # else save the most recent for later, and continue
+  most_recent_item_link = rss_feed.at('item').at('link').content
+  if (most_recent_item_link == article_link)
+    abort 'There are no new items to add'
+  else
+    recent_items = rss_feed.css('item')[0..9] # save recent items
+    rss_feed.css('item').remove # removes all items
+  end
+end
+
+# add new item to feed
+Nokogiri::XML::Builder.with(rss_feed.at('channel')) do |xml|
+  xml.item {
+    xml.title article_title
+    xml.link article_link
+    xml.description article_description
+  }
+end
+
+# add previously grabbed items (if any) and save
+rss_feed.at('channel').add_child(recent_items) unless recent_items.nil?
+
+File.open(rss_file, "w") do |f|
+  f.puts rss_feed.to_xml
+end
