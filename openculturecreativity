@@ -32,7 +32,7 @@ else
   # abort if most recent item link is the same as the newly retrieved one
   # else save the most recent for later, and continue
   most_recent_item_link = rss_feed.at('item').at('link').content
-  if (most_recent_item_link == comic_link)
+  if (most_recent_item_link == article_link)
     abort 'There are no new items to add'
   else
     recent_items = rss_feed.css('item')[0..9] # save recent items
