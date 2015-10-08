@@ -14,9 +14,6 @@ Generates RSS feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, i
 ### smashingnewsletter
 Generates RSS feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-smashing-newsletter/) posts.
 
-### thatsinhuman
-Generates the RSS feed used in [Ty Halley](https://twitter.com/tyhalley)’s [That’s Inhuman](http://thatsinhuman.com/) comic.
-
 ### thiscolumnwillchangeyourlife
 Generates RSS feed of “This Column Will Change Your Life” full articles
 
