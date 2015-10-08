@@ -15,7 +15,7 @@ Generates RSS feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, i
 Generates RSS feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-smashing-newsletter/) posts.
 
 ### thiscolumnwillchangeyourlife
-Generates RSS feed of “This Column Will Change Your Life” full articles
+Generates RSS feed of “[This Column Will Change Your Life](http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife)” full articles
 
 #### License
 The Unlicense (Public Domain, essentially)
