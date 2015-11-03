@@ -22,7 +22,7 @@ if !File.file?(rss_file)
       xml.channel {
         xml.title 'Smashing Newsletter'
         xml.link site_page
-        xml.description 'Direct links to Short of the Week videos'
+        xml.description 'Generates RSS feed for Smashing Newsletter posts'
       }
     }
   end
