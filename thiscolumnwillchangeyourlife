@@ -3,8 +3,8 @@
 require 'rss'
 require 'nokogiri'
 
-site_rss = "http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/rss"
-rss_file = ENV['HOME'] + "/public_html/vitorgalvao/rss/thiscolumnwillchangeyourlife.rss"
+site_rss = 'http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/thiscolumnwillchangeyourlife.rss'
 
 # get site rss feed
 site_feed = RSS::Parser.parse(open(site_rss))
@@ -18,11 +18,11 @@ article_description = article_page.at('.content__article-body').inner_html
 # or prepare existing one (checking if retried item is new)
 if !File.file?(rss_file)
   tmp_feed = Nokogiri::XML::Builder.new do |xml|
-    xml.rss("version" => "2.0") {
+    xml.rss('version' => '2.0') {
       xml.channel {
-        xml.title "This column will change your life"
-        xml.link "http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife"
-        xml.description "RSS feed of “This Column Will Change Your Life” full articles"
+        xml.title 'This column will change your life'
+        xml.link 'http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/'
+        xml.description 'RSS feed of “This Column Will Change Your Life” full articles'
       }
     }
   end
@@ -53,6 +53,6 @@ end
 # add previously grabbed items (if any) and save
 rss_feed.at('channel').add_child(recent_items) unless recent_items.nil?
 
-File.open(rss_file, "w") do |f|
+File.open(rss_file, 'w') do |f|
   f.puts rss_feed.to_xml
 end

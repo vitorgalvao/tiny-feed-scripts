@@ -3,8 +3,8 @@
 require 'open-uri'
 require 'nokogiri'
 
-site_page = "http://www.penny-arcade.com/comic"
-rss_file = ENV['HOME'] + "/public_html/vitorgalvao/rss/pennyarcade.rss"
+site_page = 'http://www.penny-arcade.com/comic'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/pennyarcade.rss'
 
 # get new comic
 page = Nokogiri::HTML(open(site_page))
@@ -20,11 +20,11 @@ comic_description = description_page.at('.copy').inner_html
 # or prepare existing one (checking if retried item is new)
 if !File.file?(rss_file)
   tmp_feed = Nokogiri::XML::Builder.new do |xml|
-    xml.rss("version" => "2.0") {
+    xml.rss('version' => '2.0') {
       xml.channel {
-        xml.title "Penny Arcade"
+        xml.title 'Penny Arcade'
         xml.link site_page
-        xml.description "Penny Arcade comic"
+        xml.description 'Penny Arcade comic'
       }
     }
   end
@@ -55,6 +55,6 @@ end
 # add previously grabbed items (if any) and save
 rss_feed.at('channel').add_child(recent_items) unless recent_items.nil?
 
-File.open(rss_file, "w") do |f|
+File.open(rss_file, 'w') do |f|
   f.puts rss_feed.to_xml
 end
