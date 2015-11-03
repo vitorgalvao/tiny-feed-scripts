@@ -17,5 +17,8 @@ Generates RSS feed for [Smashing Newsletter](http://www.smashingmagazine.com/the
 ### thiscolumnwillchangeyourlife
 Generates RSS feed of “[This Column Will Change Your Life](http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife)” full articles.
 
+### tomgauldsculturalcartoons
+Generates RSS feed of [Tom Gauld’s cultural cartoons](http://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons).
+
 #### License
 The Unlicense (Public Domain, essentially)

@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+require 'rss'
+require 'nokogiri'
+
+site_rss = 'http://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/tomgauldsculturalcartoons.rss'
+
+# get site rss feed
+site_feed = RSS::Parser.parse(open(site_rss))
+article_link = site_feed.items[0].link
+article_title = site_feed.items[0].title
+article_page = Nokogiri::HTML(open(article_link))
+article_image = article_page.at('.maxed.responsive-img').attr('srcset').sub(%r{.*, ([^,]*) 700w,.*}, '\1')
+article_description = article_page.at('.content__standfirst').inner_html
+
+# create new feed (if it doesn't exist)
+# or prepare existing one (checking if retried item is new)
+if !File.file?(rss_file)
+  tmp_feed = Nokogiri::XML::Builder.new do |xml|
+    xml.rss('version' => '2.0') {
+      xml.channel {
+        xml.title 'Tom Gauld’s cultural cartoons'
+        xml.link 'http://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/'
+        xml.description 'RSS feed of Tom Gauld’s cultural cartoons'
+      }
+    }
+  end
+  rss_feed = Nokogiri::XML(tmp_feed.to_xml)
+else
+  rss_feed = Nokogiri::XML(File.open(rss_file))
+
+  # abort if most recent item link is the same as the newly retrieved one
+  # else save the most recent for later, and continue
+  most_recent_item_link = rss_feed.at('item').at('link').content
+  if (most_recent_item_link == article_link)
+    abort 'There are no new items to add'
+  else
+    recent_items = rss_feed.css('item')[0..9] # save recent items
+    rss_feed.css('item').remove # removes all items
+  end
+end
+
+# add new item to feed
+Nokogiri::XML::Builder.with(rss_feed.at('channel')) do |xml|
+  xml.item {
+    xml.title article_title
+    xml.link article_link
+    xml.description "<img src='#{article_image}'>#{article_description}"
+  }
+end
+
+# add previously grabbed items (if any) and save
+rss_feed.at('channel').add_child(recent_items) unless recent_items.nil?
+
+File.open(rss_file, 'w') do |f|
+  f.puts rss_feed.to_xml
+end
