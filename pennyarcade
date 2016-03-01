@@ -3,12 +3,13 @@
 require 'open-uri'
 require 'nokogiri'
 
-site_page = 'http://www.penny-arcade.com/comic'
+site_page = 'https://www.penny-arcade.com/comic'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/pennyarcade.rss'
 
 # get new comic
 page = Nokogiri::HTML(open(site_page))
 description_page_url = page.at('.comicTag a').attr('href')
+description_page_url = description_page_url.sub('http', 'https') # needed while the comic page links to a description page with http (that then tries to redirect to https and makes open-uri choke)
 description_page = Nokogiri::HTML(open(description_page_url))
 
 comic_title = page.at('.comicTag h2').text
