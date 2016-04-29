@@ -3,11 +3,11 @@
 require 'open-uri'
 require 'nokogiri'
 
-site_page = 'http://www.openculture.com/category/creativity-2'
+site_url = 'http://www.openculture.com/category/creativity-2'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/openculturecreativity.rss'
 
 # get new article
-page = Nokogiri::HTML(open(site_page))
+page = Nokogiri::HTML(open(site_url))
 article_link = page.at('.contenttitle h1 > a').attr('href')
 article_page = Nokogiri::HTML(open(article_link))
 article_title = article_page.at('h1').text
@@ -20,7 +20,7 @@ if !File.file?(rss_file)
     xml.rss('version' => '2.0') {
       xml.channel {
         xml.title 'Open Culture’s Creativity Category'
-        xml.link site_page
+        xml.link site_url
         xml.description 'RSS feed of just the posts in the creativity category'
       }
     }
