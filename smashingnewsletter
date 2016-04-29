@@ -34,7 +34,8 @@ else
   # else save the most recent for later, and continue
   most_recent_item_link = rss_feed.at('item').at('link').content
   if (most_recent_item_link == newsletter_link)
-    abort 'There are no new items to add'
+    puts 'There are no new items to add'
+    exit 0
   else
     recent_items = rss_feed.css('item')[0..9] # save recent items
     rss_feed.css('item').remove # removes all items
