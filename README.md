@@ -1,4 +1,4 @@
-# Collection of small scripts to create RSS feeds
+# Collection of small scripts to generate RSS feeds
 
 These are mostly ready to run. The only thing you need to change is the `rss_file` line, to indicate where the feed should be saved.
 
