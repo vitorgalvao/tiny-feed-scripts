@@ -2,6 +2,12 @@
 
 These are mostly ready to run. The only thing you need to change is the `rss_file` line, to indicate where the feed should be saved.
 
+### affinitydesignerroadmap
+Generates RSS feed of the [first forum post of Affinity Designer’s feature roadmap](https://affinity.serif.com/forum/index.php?/topic/842-affinity-designer-feature-roadmap/).
+
+### affinityphotoroadmap
+Generates RSS feed of the [first forum post of Affinity Photo’s feature roadmap](https://affinity.serif.com/forum/index.php?/topic/10075-affinity-photo-feature-roadmap/).
+
 ### opencultureanimation
 Generates RSS feed to [Open Culture](http://www.openculture.com/)’s posts in the [“Animation” category](http://www.openculture.com/category/animation-2).
 
