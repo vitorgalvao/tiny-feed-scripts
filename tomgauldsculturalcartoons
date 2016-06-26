@@ -3,7 +3,7 @@
 require 'rss'
 require 'nokogiri'
 
-site_rss = 'http://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/rss'
+site_rss = 'https://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/rss'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/tomgauldsculturalcartoons.rss'
 
 # get site rss feed

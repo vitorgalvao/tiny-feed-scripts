@@ -3,7 +3,7 @@
 require 'rss'
 require 'nokogiri'
 
-site_rss = 'http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/rss'
+site_rss = 'https://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/rss'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/thiscolumnwillchangeyourlife.rss'
 
 # get site rss feed
