@@ -12,7 +12,9 @@ article_link = site_feed.items[0].link
 article_title = site_feed.items[0].title
 article_page = Nokogiri::HTML(open(article_link))
 article_image = article_page.at('picture').at('source').attr('srcset').sub(%r{ \d+w$}, '')
-article_description = article_page.at('.content__article-body').inner_html
+article_content = article_page.at('.content__article-body')
+article_content.search('aside').remove # remove block that links to other posts
+article_description = article_content.inner_html
 
 # create new feed (if it doesn't exist)
 # or prepare existing one (checking if retried item is new)
