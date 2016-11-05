@@ -30,10 +30,10 @@ if !File.file?(rss_file)
 else
   rss_feed = Nokogiri::XML(File.open(rss_file))
 
-  # abort if most recent item link is the same as the newly retrieved one
+  # abort if most recent item title is the same as the newly retrieved one
   # else save the most recent for later, and continue
-  most_recent_item_link = rss_feed.at('item').at('link').content
-  if (most_recent_item_link == video_link)
+  most_recent_item_title = rss_feed.at('item').at('title').content
+  if (most_recent_item_title == video_title)
     puts 'There are no new items to add'
     exit 0
   else
