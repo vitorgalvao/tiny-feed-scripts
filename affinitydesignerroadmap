@@ -10,7 +10,6 @@ rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/affinitydesignerroadmap.r
 page = Nokogiri::HTML(open(site_url))
 post = page.at('div.post.entry-content')
 post_text = post.inner_html
-edited_date = post.at('p.edit').text.strip.sub("\n", ' ').gsub(%r{[\n\t]}, '')
 
 # create new feed (if it doesn't exist)
 # or prepare existing one (checking if retried item is new)
@@ -28,10 +27,10 @@ if !File.file?(rss_file)
 else
   rss_feed = Nokogiri::XML(File.open(rss_file))
 
-  # abort if most recent item title (edited date) is the same as the newly retrieved one
+  # abort if most recent item description is the same as the newly retrieved one
   # else save the most recent for later, and continue
-  most_recent_item_title = rss_feed.at('item').at('title').content
-  if (most_recent_item_title == edited_date)
+  most_recent_item_description = rss_feed.at('item').at('description').content
+  if (most_recent_item_description == post_text)
     puts 'There are no new items to add'
     exit 0
   else
@@ -43,7 +42,7 @@ end
 # add new item to feed
 Nokogiri::XML::Builder.with(rss_feed.at('channel')) do |xml|
   xml.item {
-    xml.title edited_date
+    xml.title 'Updated feature roadmap'
     xml.link site_url
     xml.description post_text
   }
