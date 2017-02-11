@@ -11,9 +11,6 @@ Generates RSS feed of the [first forum post of Affinity Photo’s feature roadma
 ### bigfatquiz
 Generates RSS feed of [Toby’s Big Fat Quiz YouTube playlist](https://www.youtube.com/playlist?list=PLxFjqypxm9lpx1ZBaKfXhON301mXS1WGE).
 
-### crashcoursephilosophy
-Generates RSS feed of [Crash Course Philosphy’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNgK6MZucdYldNkMybYIHKR).
-
 ### opencultureanimation
 Generates RSS feed to [Open Culture](http://www.openculture.com/)’s posts in the [“Animation” category](http://www.openculture.com/category/animation-2).
 
