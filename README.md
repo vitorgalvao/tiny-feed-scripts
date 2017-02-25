@@ -14,6 +14,9 @@ Generates RSS feed of [Toby’s Big Fat Quiz YouTube playlist](https://www.youtu
 ### crashcoursemythology
  -Generates RSS feed of [Crash Course Mythology’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNCG9Vq7vdvJytS-F-xGi7_).
 
+### crashcoursecomputerscience
+ -Generates RSS feed of [Crash Course Computer Science’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo).
+
 ### opencultureanimation
 Generates RSS feed to [Open Culture](http://www.openculture.com/)’s posts in the [“Animation” category](http://www.openculture.com/category/animation-2).
 
