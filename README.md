@@ -12,10 +12,13 @@ Generates RSS feed of the [first forum post of Affinity Photo’s feature roadma
 Generates RSS feed of [Toby’s Big Fat Quiz YouTube playlist](https://www.youtube.com/playlist?list=PLxFjqypxm9lpx1ZBaKfXhON301mXS1WGE).
 
 ### crashcoursemythology
- -Generates RSS feed of [Crash Course Mythology’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNCG9Vq7vdvJytS-F-xGi7_).
+Generates RSS feed of [Crash Course Mythology’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNCG9Vq7vdvJytS-F-xGi7_).
 
 ### crashcoursecomputerscience
- -Generates RSS feed of [Crash Course Computer Science’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo).
+Generates RSS feed of [Crash Course Computer Science’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo).
+
+### nytimesopdocs
+Generates RSS feed of [New York Times Op-Docs](https://www.nytimes.com/video/op-docs).
 
 ### opencultureanimation
 Generates RSS feed to [Open Culture](http://www.openculture.com/)’s posts in the [“Animation” category](http://www.openculture.com/category/animation-2).
