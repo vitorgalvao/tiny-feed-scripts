@@ -8,8 +8,7 @@ rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/affinityphotoroadmap.rss'
 
 # parse post
 page = Nokogiri::HTML(open(site_url))
-post = page.at('div.post.entry-content')
-post_text = post.inner_html
+post_text = page.at('article').at('div[data-role="commentContent"]').inner_html.strip
 
 # create new feed (if it doesn't exist)
 # or prepare existing one (checking if retried item is new)
