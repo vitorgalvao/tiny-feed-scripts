@@ -17,6 +17,9 @@ Generates RSS feed of [Crash Course Mythology’s YouTube playlist](https://www.
 ### crashcoursecomputerscience
 Generates RSS feed of [Crash Course Computer Science’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo).
 
+### explosm
+Generates RSS feed to [Explosm](http://explosm.net/)’s main comic, including the image.
+
 ### nytimesopdocs
 Generates RSS feed of [New York Times Op-Docs](https://www.nytimes.com/video/op-docs).
 
