@@ -2,6 +2,9 @@
 
 These are mostly ready to run. The only thing you need to change is the `rss_file` line, to indicate where the feed should be saved.
 
+### adietados365dias
+Generates RSS feed of the [Vegan tagged posts from “A dieta dos 365 dias”](http://adietados365dias.blogs.sapo.pt/tag/vegetariano).
+
 ### affinitydesignerroadmap
 Generates RSS feed of the [first forum post of Affinity Designer’s feature roadmap](https://affinity.serif.com/forum/index.php?/topic/842-affinity-designer-feature-roadmap/).
 
