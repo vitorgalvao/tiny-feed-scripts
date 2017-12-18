@@ -5,8 +5,14 @@ These are mostly ready to run. The only thing you need to change is the `rss_fil
 ### adietados365dias
 Generates RSS feed of the [Vegan tagged posts from “A dieta dos 365 dias”](http://adietados365dias.blogs.sapo.pt/tag/vegetariano).
 
+### affinitydesignerbetafeatures
+Generates RSS feed of the [first forum post of Affinity Designer’s beta features](https://forum.affinity.serif.com/index.php?/topic/51629-affinity-designer-customer-beta).
+
 ### affinitydesignerroadmap
 Generates RSS feed of the [first forum post of Affinity Designer’s feature roadmap](https://affinity.serif.com/forum/index.php?/topic/842-affinity-designer-feature-roadmap/).
+
+### affinityphotobetafeatures
+Generates RSS feed of the [first forum post of Affinity Photo’s beta features](https://forum.affinity.serif.com/index.php?/topic/52171-affinity-photo-customer-beta).
 
 ### affinityphotoroadmap
 Generates RSS feed of the [first forum post of Affinity Photo’s feature roadmap](https://affinity.serif.com/forum/index.php?/topic/10075-affinity-photo-feature-roadmap/).
