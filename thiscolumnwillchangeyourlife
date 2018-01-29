@@ -1,61 +1,62 @@
 #!/usr/bin/env ruby
 
+require 'json'
 require 'rss'
 require 'nokogiri'
 
-site_rss = 'https://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/rss'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/thiscolumnwillchangeyourlife.rss'
+# Configure feed info
+site_url = 'https://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/rss'
+feed_title = 'This Column Will Change Your Life'
+feed_name = 'thiscolumnwillchangeyourlife'
 
-# get site rss feed
-site_feed = RSS::Parser.parse(open(site_rss))
-article_link = site_feed.items[0].link
-article_title = site_feed.items[0].title
-article_page = Nokogiri::HTML(open(article_link))
-article_image = article_page.at('picture').at('source').attr('srcset').sub(%r{ \d+w$}, '')
-article_content = article_page.at('.content__article-body')
-article_content.search('aside').remove # remove block that links to other posts
-article_description = article_content.inner_html
+feed_file = ENV['HOME'] + "/public_html/vitorgalvao/rss/#{feed_name}.json"
+feed_location = "https://vitorgalvao.com/rss/#{feed_name}.json"
 
-# create new feed (if it doesn't exist)
-# or prepare existing one (checking if retried item is new)
-if !File.file?(rss_file)
-  tmp_feed = Nokogiri::XML::Builder.new do |xml|
-    xml.rss('version' => '2.0') {
-      xml.channel {
-        xml.title 'This column will change your life'
-        xml.link 'http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/'
-        xml.description 'RSS feed of “This Column Will Change Your Life” full articles'
-      }
-    }
-  end
-  rss_feed = Nokogiri::XML(tmp_feed.to_xml)
-else
-  rss_feed = Nokogiri::XML(File.open(rss_file))
+feed = {
+  version: 'https://jsonfeed.org/version/1',
+  title: feed_title,
+  home_page_url: site_url,
+  feed_url: feed_location
+}
 
-  # abort if most recent item link is the same as the newly retrieved one
-  # else save the most recent for later, and continue
-  most_recent_item_link = rss_feed.at('item').at('link').content
-  if (most_recent_item_link == article_link)
-    puts 'There are no new items to add'
-    exit 0
-  else
-    recent_items = rss_feed.css('item')[0..9] # save recent items
-    rss_feed.css('item').remove # removes all items
-  end
+# Leave as is. Preparing the feed.
+feed_new = {}
+feed_new['items'] = []
+feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
+feed_old_first_url = feed_old['items'][0]['url'] rescue ''
+
+# Strategy for getting new items
+latest_issues = RSS::Parser.parse(open(site_url)).items
+
+latest_issues.each do |issue|
+  issue_url = issue.link
+
+  # Stop adding once we reach the latest already present
+  break if issue_url == feed_old_first_url
+
+  issue_title = issue.title
+  issue_page = Nokogiri::HTML(open(issue_url))
+  issue_full = issue_page.at('.content__article-body')
+  issue_tagline = issue_full.at('p').text
+  issue_image = issue_full.at('picture').at('source').attr('srcset').sub(/ \d+w$/, '')
+
+  # Remove extraneous nodes
+  issue_full.search('aside').remove
+  issue_full.search('header').remove
+  issue_full.search('.submeta').remove
+
+  item_content = "<p><i>#{issue_tagline}</i></p><img src='#{issue_image}'>" + issue_full.inner_html
+
+  feed_new['items'].push(title: issue_title, id: issue_url, url: issue_url, content_html: item_content)
 end
 
-# add new item to feed
-Nokogiri::XML::Builder.with(rss_feed.at('channel')) do |xml|
-  xml.item {
-    xml.title article_title
-    xml.link article_link
-    xml.description "<img src='#{article_image}'>#{article_description}"
-  }
+# If there are no new items, inform and exit
+if feed_new['items'].empty?
+  puts 'There are no new items to add'
+  exit 0
 end
 
-# add previously grabbed items (if any) and save
-rss_feed.at('channel').add_child(recent_items) unless recent_items.nil?
+# Prepend new items to the old and limit the amount of items
+feed['items'] = (feed_new['items'] + feed_old['items']).first(20)
 
-File.open(rss_file, 'w') do |f|
-  f.puts rss_feed.to_xml
-end
+File.write(feed_file, JSON.pretty_generate(feed))
