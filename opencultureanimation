@@ -4,7 +4,7 @@ require 'open-uri'
 require 'nokogiri'
 
 site_url = 'http://www.openculture.com/category/animation-2'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/opencultureanimation.rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/opencultureanimation.rss'
 
 # get new article
 page = Nokogiri::HTML(open(site_url))

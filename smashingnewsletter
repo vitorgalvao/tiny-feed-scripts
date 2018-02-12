@@ -4,7 +4,7 @@ require 'open-uri'
 require 'nokogiri'
 
 site_url = 'http://www.smashingmagazine.com/the-smashing-newsletter/'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/smashingnewsletter.rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/smashingnewsletter.rss'
 
 # get latest newsletter
 newsletters_page = Nokogiri::HTML(open(site_url))

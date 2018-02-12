@@ -4,7 +4,7 @@ require 'open-uri'
 require 'nokogiri'
 
 site_url = 'https://www.youtube.com/playlist?list=PLxFjqypxm9lpx1ZBaKfXhON301mXS1WGE'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/bigfatquiz.rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/bigfatquiz.rss'
 
 # get new video
 page = Nokogiri::HTML(open(site_url))

@@ -4,7 +4,7 @@ require 'open-uri'
 require 'nokogiri'
 
 site_url = 'https://affinity.serif.com/forum/index.php?/topic/10075-affinity-photo-feature-roadmap/'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/affinityphotoroadmap.rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/affinityphotoroadmap.rss'
 
 # parse post
 page = Nokogiri::HTML(open(site_url))

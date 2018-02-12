@@ -9,8 +9,8 @@ site_url = 'https://forum.affinity.serif.com/index.php?/forum/15-designer-beta-o
 feed_title = 'Affinity Designer Beta Features'
 feed_name = 'affinitydesignerbetafeatures'
 
-feed_file = ENV['HOME'] + "/public_html/vitorgalvao/rss/#{feed_name}.json"
-feed_location = "https://vitorgalvao.com/rss/#{feed_name}.json"
+feed_file = ENV['HOME'] + "/public_html/vitorgalvao/feeds/#{feed_name}.json"
+feed_location = "https://vitorgalvao.com/feeds/#{feed_name}.json"
 
 feed = {
   version: 'https://jsonfeed.org/version/1',

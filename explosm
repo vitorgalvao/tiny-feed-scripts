@@ -5,7 +5,7 @@ require 'rss'
 require 'nokogiri'
 
 site_rss = 'https://feeds.feedburner.com/Explosm'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/explosm.rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/explosm.rss'
 
 # get site rss feed
 site_feed = RSS::Parser.parse(open(site_rss))

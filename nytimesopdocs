@@ -5,7 +5,7 @@ require 'nokogiri'
 
 base_url = 'https://www.nytimes.com'
 site_url = base_url + '/video/op-docs'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/nytimesopdocs.rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/nytimesopdocs.rss'
 
 # get new video
 page = Nokogiri::HTML(open(site_url))

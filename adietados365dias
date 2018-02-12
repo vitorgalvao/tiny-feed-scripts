@@ -4,7 +4,7 @@ require 'open-uri'
 require 'nokogiri'
 
 site_url = 'http://adietados365dias.blogs.sapo.pt/tag/vegetariano'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/rss/adietados365dias.rss'
+rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/adietados365dias.rss'
 
 # parse post
 page = Nokogiri::HTML(open(site_url))

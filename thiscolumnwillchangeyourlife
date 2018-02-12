@@ -9,8 +9,8 @@ site_url = 'https://www.theguardian.com/lifeandstyle/series/thiscolumnwillchange
 feed_title = 'This Column Will Change Your Life'
 feed_name = 'thiscolumnwillchangeyourlife'
 
-feed_file = ENV['HOME'] + "/public_html/vitorgalvao/rss/#{feed_name}.json"
-feed_location = "https://vitorgalvao.com/rss/#{feed_name}.json"
+feed_file = ENV['HOME'] + "/public_html/vitorgalvao/feeds/#{feed_name}.json"
+feed_location = "https://vitorgalvao.com/feeds/#{feed_name}.json"
 
 feed = {
   version: 'https://jsonfeed.org/version/1',
