@@ -36,7 +36,7 @@ latest_issues.each do |issue|
 
   issue_title = issue.title
   issue_page = Nokogiri::HTML(open(issue_url))
-  issue_full = issue_page.at('.content__article-body')
+  issue_full = issue_page.at('.content__main-column--article')
   issue_tagline = issue_full.at('p').text
   issue_image = issue_full.at('picture').at('source').attr('srcset').sub(/ \d+w$/, '')
 
