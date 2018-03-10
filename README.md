@@ -44,6 +44,9 @@ Generates feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, inclu
 ### smashingnewsletter
 Generates feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-smashing-newsletter/) posts.
 
+### thedailyshowbetweenthescenes
+Generates feed for [The Daily Show](https://www.youtube.com/channel/UCwWhs_6x42TyRM4Wstoq8HA/)’s “Between the Scenes” videos.
+
 ### thiscolumnwillchangeyourlife
 Generates feed of “[This Column Will Change Your Life](http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife)” full articles.
 

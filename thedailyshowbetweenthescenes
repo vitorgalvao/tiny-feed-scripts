@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'rss'
+require 'nokogiri'
+
+# Configure feed info
+site_url = 'https://www.youtube.com/feeds/videos.xml?channel_id=UCwWhs_6x42TyRM4Wstoq8HA'
+feed_title = 'The Daily Show Between the Scenes'
+feed_name = 'thedailyshowbetweenthescenes'
+
+feed_file = ENV['HOME'] + "/public_html/vitorgalvao/feeds/#{feed_name}.json"
+feed_location = "https://vitorgalvao.com/feeds/#{feed_name}.json"
+
+feed = {
+  version: 'https://jsonfeed.org/version/1',
+  title: feed_title,
+  home_page_url: site_url,
+  feed_url: feed_location
+}
+
+# Leave as is. Preparing the feed.
+feed_new = {}
+feed_new['items'] = []
+feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
+feed_old_first_url = feed_old['items'][0]['url'] rescue ''
+
+# Strategy for getting new items
+latest_issues = Nokogiri::XML(open(site_url)).remove_namespaces!.css('entry').select { |e| e.at('title').text.match?('Between the Scenes') }
+
+latest_issues.each do |issue|
+  issue_url = issue.at('link').attr('href')
+
+  # Stop adding once we reach the latest already present
+  break if issue_url == feed_old_first_url
+
+  issue_title = issue.at('title').text
+  issue_thumbnail = issue.at('thumbnail').attr('url')
+  issue_description = issue.at('description').text.sub(/\n.*/m, '')
+  item_content = "<p>#{issue_description}</p><img src='#{issue_thumbnail}'>"
+
+  feed_new['items'].push(title: issue_title, id: issue_url, url: issue_url, content_html: item_content)
+end
+
+# If there are no new items, inform and exit
+if feed_new['items'].empty?
+  puts 'There are no new items to add'
+  exit 0
+end
+
+# Prepend new items to the old and limit the amount of items
+feed['items'] = (feed_new['items'] + feed_old['items']).first(20)
+
+File.write(feed_file, JSON.pretty_generate(feed))
