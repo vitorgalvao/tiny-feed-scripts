@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 
-require 'open-uri'
 require 'nokogiri'
+require 'open-uri'
 
 site_url = 'https://affinity.serif.com/forum/index.php?/topic/842-affinity-designer-feature-roadmap/'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/affinitydesignerroadmap.rss'
 
 # parse post
-page = Nokogiri::HTML(open(site_url))
+page = Nokogiri::HTML(URI.parse(site_url).open)
 post_text = page.at('article').at('div[data-role="commentContent"]').inner_html.strip
 
 # create new feed (if it doesn't exist)

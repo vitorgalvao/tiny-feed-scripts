@@ -1,14 +1,14 @@
 #!/usr/bin/env ruby
 
-require 'open-uri'
 require 'nokogiri'
+require 'open-uri'
 
 base_url = 'https://www.nytimes.com'
 site_url = base_url + '/video/op-docs'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/nytimesopdocs.rss'
 
 # get new video
-page = Nokogiri::HTML(open(site_url))
+page = Nokogiri::HTML(URI.parse(site_url).open)
 latest_video = page.at('#recent-episodes-inner > ul').at('li')
 video_link = base_url + latest_video.css('a')[1].attr('href')
 video_title = latest_video.at('h3').text

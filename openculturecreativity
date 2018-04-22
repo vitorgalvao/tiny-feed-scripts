@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
-require 'open-uri'
 require 'nokogiri'
+require 'open-uri'
 
 site_url = 'http://www.openculture.com/category/creativity-2'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/openculturecreativity.rss'
 
 # get new article
-page = Nokogiri::HTML(open(site_url))
+page = Nokogiri::HTML(URI.parse(site_url).open)
 article_link = page.at('.contenttitle h1 > a').attr('href')
-article_page = Nokogiri::HTML(open(article_link))
+article_page = Nokogiri::HTML(URI.parse(article_link).open)
 article_title = article_page.at('h1').text
 article_description = article_page.at('.entry').inner_html
 

@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
+require 'nokogiri'
 require 'open-uri'
 require 'rss'
-require 'nokogiri'
 
 site_rss = 'https://feeds.feedburner.com/Explosm'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/explosm.rss'
 
 # get site rss feed
-site_feed = RSS::Parser.parse(open(site_rss))
+site_feed = RSS::Parser.parse(URI.parse(site_rss).open)
 article_link = site_feed.items[0].link
 article_title = site_feed.items[0].title
-article_page = Nokogiri::HTML(open(article_link))
+article_page = Nokogiri::HTML(URI.parse(article_link).open)
 article_image = 'http:' + article_page.at('#main-comic').attr('src')
 
 # create new feed (if it doesn't exist)

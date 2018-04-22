@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 
-require 'open-uri'
 require 'nokogiri'
+require 'open-uri'
 
 site_url = 'https://www.youtube.com/playlist?list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/crashcoursecomputerscience.rss'
 
 # get new video
-page = Nokogiri::HTML(open(site_url))
+page = Nokogiri::HTML(URI.parse(site_url).open)
 latest_video = page.css('tr').last
 video_info = latest_video.at('.pl-video-title')
 video_title = video_info.text.strip.gsub(%r{\n.*}, '')

@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
-require 'open-uri'
 require 'nokogiri'
+require 'open-uri'
 
 site_url = 'http://www.smashingmagazine.com/the-smashing-newsletter/'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/smashingnewsletter.rss'
 
 # get latest newsletter
-newsletters_page = Nokogiri::HTML(open(site_url))
+newsletters_page = Nokogiri::HTML(URI.parse(site_url).open)
 latest_newsletter_page_link = newsletters_page.css('article ul')[1].at('a').attr('href')
-page = Nokogiri::HTML(open(latest_newsletter_page_link))
+page = Nokogiri::HTML(URI.parse(latest_newsletter_page_link).open)
 
 newsletter_title = page.at('h2').text
 newsletter_link = latest_newsletter_page_link

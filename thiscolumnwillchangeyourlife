@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 require 'json'
-require 'rss'
 require 'nokogiri'
+require 'rss'
 
 # Configure feed info
 site_url = 'https://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/rss'
@@ -26,7 +26,7 @@ feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-latest_issues = RSS::Parser.parse(open(site_url)).items
+latest_issues = RSS::Parser.parse(URI.parse(site_url).open).items
 
 latest_issues.each do |issue|
   issue_url = issue.link
@@ -35,7 +35,7 @@ latest_issues.each do |issue|
   break if issue_url == feed_old_first_url
 
   issue_title = issue.title
-  issue_page = Nokogiri::HTML(open(issue_url))
+  issue_page = Nokogiri::HTML(URI.parse(issue_url).open)
   issue_full = issue_page.at('.content__main-column--article')
   issue_tagline = issue_full.at('p').text
   issue_image = issue_full.at('picture').at('source').attr('srcset').sub(/ \d+w$/, '')

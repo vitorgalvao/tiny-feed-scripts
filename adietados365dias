@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 
-require 'open-uri'
 require 'nokogiri'
+require 'open-uri'
 
 site_url = 'http://adietados365dias.blogs.sapo.pt/tag/vegetariano'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/adietados365dias.rss'
 
 # parse post
-page = Nokogiri::HTML(open(site_url))
+page = Nokogiri::HTML(URI.parse(site_url).open)
 recepy = page.at('article')
 title = recepy.at('h2').text
 link = recepy.at('h2').at('a').attr('href')

@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 require 'json'
-require 'open-uri'
 require 'nokogiri'
+require 'open-uri'
 
 # Configure feed info
 site_url = 'https://forum.affinity.serif.com/index.php?/forum/19-photo-beta-on-mac/'
@@ -26,7 +26,7 @@ feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-post_url = Nokogiri::HTML(open(site_url)).at('ol li a').attr('href')
+post_url = Nokogiri::HTML(URI.parse(site_url).open).at('ol li a').attr('href')
 
 # If there are no new items, inform and exit
 if post_url == feed_old_first_url
@@ -34,7 +34,7 @@ if post_url == feed_old_first_url
   exit 0
 end
 
-post = Nokogiri::HTML(open(post_url))
+post = Nokogiri::HTML(URI.parse(post_url).open)
 post_title = post.at('h1.ipsType_pageTitle').text.strip
 post_content = post.at('article').at('div[data-role="commentContent"]').inner_html.strip
 
