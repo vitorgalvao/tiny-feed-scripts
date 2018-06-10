@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'nokogiri'
+require 'open-uri'
+
+# Configure feed info
+main_url = 'https://creativemarket.com'
+site_url = main_url + '/free-goods'
+feed_title = 'Creative Market Free Goods'
+feed_name = 'creativemarketfreegoods'
+
+feed_file = ENV['HOME'] + "/public_html/vitorgalvao/feeds/#{feed_name}.json"
+feed_location = "https://vitorgalvao.com/feeds/#{feed_name}.json"
+
+feed = {
+  version: 'https://jsonfeed.org/version/1',
+  title: feed_title,
+  home_page_url: site_url,
+  feed_url: feed_location
+}
+
+# Leave as is. Preparing the feed.
+feed_new = {}
+feed_new['items'] = []
+feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
+feed_old_first_url = feed_old['items'][0]['url'] rescue ''
+
+# Strategy for getting new items
+latest_issues = Nokogiri::HTML(URI.parse(site_url).open).at('ul.products.free').css('li')
+
+latest_issues.each do |issue|
+  issue_url = main_url + issue.at('a').attr('href')
+
+  # Stop adding once we reach the latest already present
+  break if issue_url == feed_old_first_url
+
+  issue_image = issue.at('img').attr('src')
+  issue_title = issue.at('.title').text.strip
+  issue_category = issue.at('.subtitle').css('a')[1].text
+
+  issue_content = "<p>In #{issue_category}</p><img src='#{issue_image}'>"
+
+  feed_new['items'].push(title: issue_title, id: issue_url, url: issue_url, content_html: issue_content)
+end
+
+# If there are no new items, inform and exit
+if feed_new['items'].empty?
+  puts 'There are no new items to add'
+  exit 0
+end
+
+# Prepend new items to the old and limit the amount of items
+feed['items'] = (feed_new['items'] + feed_old['items']).first(20)
+
+File.write(feed_file, JSON.pretty_generate(feed))
