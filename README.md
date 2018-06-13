@@ -47,6 +47,9 @@ Generates feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, inclu
 ### smashingnewsletter
 Generates feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-smashing-newsletter/) posts.
 
+### startersquad
+Generates feed of [Starter Squad’s YouTube playlist](https://www.youtube.com/playlist?list=PLYVXcniud_HQ1KmYoc1v5O65Lb5-6bE7p)
+
 ### thedailyshowbetweenthescenes
 Generates feed for [The Daily Show](https://www.youtube.com/channel/UCwWhs_6x42TyRM4Wstoq8HA/)’s “Between the Scenes” videos.
 
