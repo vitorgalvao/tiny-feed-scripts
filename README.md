@@ -17,9 +17,6 @@ Generates feed of the [first forum post of Affinity Photo’s beta features](htt
 ### affinityphotoroadmap
 Generates feed of the [first forum post of Affinity Photo’s feature roadmap](https://affinity.serif.com/forum/index.php?/topic/10075-affinity-photo-feature-roadmap/).
 
-### bigfatquiz
-Generates feed of [Toby’s Big Fat Quiz YouTube playlist](https://www.youtube.com/playlist?list=PLxFjqypxm9lpx1ZBaKfXhON301mXS1WGE).
-
 ### crashcoursemythology
 Generates feed of [Crash Course Mythology’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNCG9Vq7vdvJytS-F-xGi7_).
 
