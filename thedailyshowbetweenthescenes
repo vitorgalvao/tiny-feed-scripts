@@ -2,7 +2,7 @@
 
 require 'json'
 require 'nokogiri'
-require 'rss'
+require 'open-uri'
 
 # Configure feed info
 site_url = 'https://www.youtube.com/feeds/videos.xml?channel_id=UCwWhs_6x42TyRM4Wstoq8HA'
