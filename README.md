@@ -47,6 +47,9 @@ Generates feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-sma
 ### startersquad
 Generates feed of [Starter Squad’s YouTube playlist](https://www.youtube.com/playlist?list=PLYVXcniud_HQ1KmYoc1v5O65Lb5-6bE7p)
 
+### subreddittop
+Generates feed of top posts of chosen subreddits.
+
 ### thedailyshowbetweenthescenes
 Generates feed for [The Daily Show](https://www.youtube.com/channel/UCwWhs_6x42TyRM4Wstoq8HA/)’s “Between the Scenes” videos.
 
