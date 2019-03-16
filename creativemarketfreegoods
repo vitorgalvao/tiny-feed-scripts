@@ -27,7 +27,7 @@ feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-latest_issues = Nokogiri::HTML(URI.parse(site_url).open).at('ul.products.free').css('li')
+latest_issues = Nokogiri::HTML(URI.parse(site_url).open('User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36')).at('ul.products.free').css('li')
 
 latest_issues.each do |issue|
   issue_url = main_url + issue.at('a').attr('href')
