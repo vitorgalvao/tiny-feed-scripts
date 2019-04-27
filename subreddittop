@@ -6,7 +6,7 @@ require 'rss'
 
 # Configure feed info
 site_url = 'https://reddit.com/'
-feed_title = 'Amalgamation of top posts of several subreddits'
+feed_title = 'Subreddit top post amalgamation'
 feed_name = 'subreddittop'
 
 feed_file = ENV['HOME'] + "/public_html/vitorgalvao/feeds/#{feed_name}.json"
