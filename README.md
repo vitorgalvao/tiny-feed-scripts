@@ -53,6 +53,10 @@ Generates feed of top posts of chosen subreddits.
 ### thedailyshowbetweenthescenes
 Generates feed for [The Daily Show](https://www.youtube.com/channel/UCwWhs_6x42TyRM4Wstoq8HA/)’s “Between the Scenes” videos.
 
+### thehollywoodreporterroundtables
+Generates feed for [The Hollywood Reporter](https://www.youtube.com/playlist?list=PLhKcXp78wsasvx-W9mZqEql3RB6xSciX4)’s “Roundtable” videos.
+
+
 ### thiscolumnwillchangeyourlife
 Generates feed of “[This Column Will Change Your Life](http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife)” full articles.
 
