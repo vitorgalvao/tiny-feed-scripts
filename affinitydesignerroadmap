@@ -3,7 +3,7 @@
 require 'nokogiri'
 require 'open-uri'
 
-site_url = 'https://affinity.serif.com/forum/index.php?/topic/842-affinity-designer-feature-roadmap/'
+site_url = 'https://forum.affinity.serif.com/index.php?/topic/842-affinity-designer-feature-roadmap/'
 rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/affinitydesignerroadmap.rss'
 
 # parse post
