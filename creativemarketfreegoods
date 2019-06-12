@@ -36,8 +36,8 @@ latest_issues.each do |issue|
   break if issue_url == feed_old_first_url
 
   issue_image = issue.at('img').attr('src')
-  issue_title = issue.at('.title').text.strip
-  issue_category = issue.at('.subtitle').css('a')[1].text
+  issue_title = issue.at('.product-details > a').text.strip
+  issue_category = issue.css('.product-attributions > a')[1].text
 
   issue_content = "<p>In #{issue_category}</p><img src='#{issue_image}'>"
 
