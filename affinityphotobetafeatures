@@ -26,7 +26,15 @@ feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-post_url = Nokogiri::HTML(URI.parse(site_url).open).at('ol li a').attr('href')
+top_post = Nokogiri::HTML(URI.parse(site_url).open).at('ol li a')
+post_title = top_post.attr('title')
+post_url = top_post.attr('href')
+
+# If top post is not a customer beta announcement, exit early
+unless post_title.match?(/Customer Beta/i)
+  puts 'Top post is not a customer beta'
+  exit 0
+end
 
 # If there are no new items, inform and exit
 if post_url == feed_old_first_url
