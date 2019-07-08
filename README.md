@@ -8,14 +8,8 @@ Generates feed of the [Vegan tagged posts from “A dieta dos 365 dias”](http:
 ### affinitydesignerbetafeatures
 Generates feed of the [first forum post of Affinity Designer’s beta features](https://forum.affinity.serif.com/index.php?/topic/51629-affinity-designer-customer-beta).
 
-### affinitydesignerroadmap
-Generates feed of the [first forum post of Affinity Designer’s feature roadmap](https://affinity.serif.com/forum/index.php?/topic/842-affinity-designer-feature-roadmap/).
-
 ### affinityphotobetafeatures
 Generates feed of the [first forum post of Affinity Photo’s beta features](https://forum.affinity.serif.com/index.php?/topic/52171-affinity-photo-customer-beta).
-
-### affinityphotoroadmap
-Generates feed of the [first forum post of Affinity Photo’s feature roadmap](https://affinity.serif.com/forum/index.php?/topic/10075-affinity-photo-feature-roadmap/).
 
 ### crashcoursemythology
 Generates feed of [Crash Course Mythology’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNCG9Vq7vdvJytS-F-xGi7_).
