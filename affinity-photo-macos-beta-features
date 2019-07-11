@@ -5,9 +5,9 @@ require 'nokogiri'
 require 'open-uri'
 
 # Configure feed info
-site_url = 'https://forum.affinity.serif.com/index.php?/forum/15-designer-beta-on-mac/'
-feed_title = 'Affinity Designer Beta Features'
-feed_name = 'affinitydesignerbetafeatures'
+site_url = 'https://forum.affinity.serif.com/index.php?/search/&q=%22Affinity%20Photo%20Customer%20Beta%22&type=forums_topic&nodes=19&search_and_or=and&search_in=titles&sortby=newest'
+feed_title = 'Affinity Photo Beta Features'
+feed_name = 'affinity-photo-macos-beta-features'
 
 feed_file = ENV['HOME'] + "/public_html/vitorgalvao/feeds/#{feed_name}.json"
 feed_location = "https://vitorgalvao.com/feeds/#{feed_name}.json"
@@ -26,15 +26,8 @@ feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-top_post = Nokogiri::HTML(URI.parse(site_url).open).at('ol li a')
-post_title = top_post.attr('title')
-post_url = top_post.attr('href')
-
-# If top post is not a customer beta announcement, exit early
-unless post_title.match?(/Customer Beta/i)
-  puts 'Top post is not a customer beta'
-  exit 0
-end
+top_post = Nokogiri::HTML(URI.parse(site_url).open).at('li.ipsStreamItem h2 a')
+post_url = top_post.attr('href').sub(/&do=.*/, '')
 
 # If there are no new items, inform and exit
 if post_url == feed_old_first_url

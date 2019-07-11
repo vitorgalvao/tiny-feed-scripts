@@ -5,11 +5,11 @@ These are mostly ready to run. The only thing you need to change is the line tha
 ### adietados365dias
 Generates feed of the [Vegan tagged posts from “A dieta dos 365 dias”](http://adietados365dias.blogs.sapo.pt/tag/vegetariano).
 
-### affinitydesignerbetafeatures
-Generates feed of the [first forum post of Affinity Designer’s beta features](https://forum.affinity.serif.com/index.php?/topic/51629-affinity-designer-customer-beta).
+### affinity-designer-mac-beta-features
+Generates feed of the newest release post of [Affinity Designer for macOS](https://forum.affinity.serif.com/index.php?/forum/15-designer-beta-on-mac/) beta features.
 
-### affinityphotobetafeatures
-Generates feed of the [first forum post of Affinity Photo’s beta features](https://forum.affinity.serif.com/index.php?/topic/52171-affinity-photo-customer-beta).
+### affinity-photo-mac-beta-features
+Generates feed of the newest release post of [Affinity Photo for macOS](https://forum.affinity.serif.com/index.php?/forum/19-photo-beta-on-mac/) beta features.
 
 ### crashcoursemythology
 Generates feed of [Crash Course Mythology’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNCG9Vq7vdvJytS-F-xGi7_).
