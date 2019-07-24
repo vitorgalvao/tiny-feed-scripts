@@ -17,9 +17,6 @@ Generates feed of [Crash Course Mythology’s YouTube playlist](https://www.yout
 ### crashcoursecomputerscience
 Generates feed of [Crash Course Computer Science’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo).
 
-### creativemarketfreegoods
-Generates feed of [Creative Market’s free goods](https://creativemarket.com/free-goods).
-
 ### explosm
 Generates feed to [Explosm](http://explosm.net/)’s main comic, including the image.
 
