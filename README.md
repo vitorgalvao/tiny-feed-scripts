@@ -23,9 +23,6 @@ Generates feed of [New York Times Op-Docs](https://www.nytimes.com/video/op-docs
 ### pennyarcade
 Generates feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, including the image.
 
-### smashingnewsletter
-Generates feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-smashing-newsletter/) posts.
-
 ### subreddittop
 Generates feed of top posts of chosen subreddits.
 
