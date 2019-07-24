@@ -8,12 +8,6 @@ Generates feed of the newest release post of [Affinity Designer for macOS](https
 ### affinity-photo-mac-beta-features
 Generates feed of the newest release post of [Affinity Photo for macOS](https://forum.affinity.serif.com/index.php?/forum/19-photo-beta-on-mac/) beta features.
 
-### crashcoursemythology
-Generates feed of [Crash Course Mythology’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNCG9Vq7vdvJytS-F-xGi7_).
-
-### crashcoursecomputerscience
-Generates feed of [Crash Course Computer Science’s YouTube playlist](https://www.youtube.com/playlist?list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo).
-
 ### explosm
 Generates feed to [Explosm](http://explosm.net/)’s main comic, including the image.
 
