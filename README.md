@@ -26,9 +26,6 @@ Generates feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, inclu
 ### smashingnewsletter
 Generates feed for [Smashing Newsletter](http://www.smashingmagazine.com/the-smashing-newsletter/) posts.
 
-### startersquad
-Generates feed of [Starter Squad’s YouTube playlist](https://www.youtube.com/playlist?list=PLYVXcniud_HQ1KmYoc1v5O65Lb5-6bE7p)
-
 ### subreddittop
 Generates feed of top posts of chosen subreddits.
 
