@@ -20,12 +20,6 @@ Generates feed to [Explosm](http://explosm.net/)’s main comic, including the i
 ### nytimesopdocs
 Generates feed of [New York Times Op-Docs](https://www.nytimes.com/video/op-docs).
 
-### opencultureanimation
-Generates feed to [Open Culture](http://www.openculture.com/)’s posts in the [“Animation” category](http://www.openculture.com/category/animation-2).
-
-### openculturecreativity
-Generates feed to [Open Culture](http://www.openculture.com/)’s posts in the [“Creativity” category](http://www.openculture.com/category/creativity-2).
-
 ### pennyarcade
 Generates feed to [Penny Arcade](http://penny-arcade.com/)’s main comic, including the image.
 
