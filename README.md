@@ -2,9 +2,6 @@
 
 These are mostly ready to run. The only thing you need to change is the line that indicates where the feed should be saved.
 
-### adietados365dias
-Generates feed of the [Vegan tagged posts from “A dieta dos 365 dias”](http://adietados365dias.blogs.sapo.pt/tag/vegetariano).
-
 ### affinity-designer-mac-beta-features
 Generates feed of the newest release post of [Affinity Designer for macOS](https://forum.affinity.serif.com/index.php?/forum/15-designer-beta-on-mac/) beta features.
 
