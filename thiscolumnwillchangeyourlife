@@ -4,13 +4,18 @@ require 'json'
 require 'nokogiri'
 require 'rss'
 
+# Require environment variables
+abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable(ENV['FEED_EXPORT_LOCATION'])
+
+abort 'You need to set a "FEED_ONLINE_LOCATION" environment variable pointing to the web directory path where the feed will be accessible from' unless ENV['FEED_ONLINE_LOCATION']
+
 # Configure feed info
 site_url = 'https://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife/rss'
 feed_title = 'This Column Will Change Your Life'
 feed_name = 'thiscolumnwillchangeyourlife'
 
-feed_file = ENV['HOME'] + "/public_html/vitorgalvao/feeds/#{feed_name}.json"
-feed_location = "https://vitorgalvao.com/feeds/#{feed_name}.json"
+feed_file = File.join(ENV['FEED_EXPORT_LOCATION'], "#{feed_name}.json")
+feed_location = File.join(ENV['FEED_ONLINE_LOCATION'], "#{feed_name}.json")
 
 feed = {
   version: 'https://jsonfeed.org/version/1',
