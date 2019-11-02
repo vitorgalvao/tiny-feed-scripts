@@ -4,8 +4,11 @@ require 'nokogiri'
 require 'open-uri'
 require 'rss'
 
+abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable(ENV['FEED_EXPORT_LOCATION'])
+
 site_rss = 'https://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/rss'
-rss_file = ENV['HOME'] + '/public_html/vitorgalvao/feeds/tomgauldsculturalcartoons.rss'
+feed_name = 'tomgauldsculturalcartoons'
+rss_file = File.join(ENV['FEED_ONLINE_LOCATION'], "#{feed_name}.rss")
 
 # get site rss feed
 site_feed = RSS::Parser.parse(URI.parse(site_rss).open)
