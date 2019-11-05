@@ -4,7 +4,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'rss'
 
-abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable(ENV['FEED_EXPORT_LOCATION'])
+abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable?(ENV['FEED_EXPORT_LOCATION'])
 
 site_rss = 'https://feeds.feedburner.com/Explosm'
 feed_name = 'explosm'

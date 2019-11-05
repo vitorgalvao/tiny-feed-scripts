@@ -5,7 +5,7 @@ require 'nokogiri'
 require 'open-uri'
 
 # Require environment variables
-abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable(ENV['FEED_EXPORT_LOCATION'])
+abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable?(ENV['FEED_EXPORT_LOCATION'])
 
 abort 'You need to set a "FEED_ONLINE_LOCATION" environment variable pointing to the web directory path where the feed will be accessible from' unless ENV['FEED_ONLINE_LOCATION']
 
