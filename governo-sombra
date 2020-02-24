@@ -10,7 +10,7 @@ abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to
 abort 'You need to set a "FEED_ONLINE_LOCATION" environment variable pointing to the web directory path where the feed will be accessible from' unless ENV['FEED_ONLINE_LOCATION']
 
 # Configure feed info
-site_url = 'https://www.tsf.pt/programa/governo-sombra/artigos.html'
+site_url = 'https://sic.pt/Programas/governo-sombra/videos'
 feed_title = 'Governo Sombra'
 feed_name = 'governo-sombra'
 
@@ -31,32 +31,19 @@ feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-latest_issues = lambda {
-  page = Nokogiri::HTML(URI.parse(site_url).open)
-
-  # The main section has video of both full shows and clips
-  # The sidebar has audio of full shows
-  # So we grab from the main section but only keep those whose title match the sidebar
-  sidebar_titles = page.css('div.t-s19-body-sidebar .t-am-header h2').map(&:text)
-  episodes = page.css('article > header.t-am-header')[0..13] # If we grab more, we go into the sidebar; if we use another approach, we don’t get the latest (most recent) video
-    .select { |episode| sidebar_titles.include?(episode.at('h2').text) }
-
-  return episodes
-}.call
+latest_issues = Nokogiri::HTML(URI.parse(site_url).open).css('article.MC-programas_governo-sombra_videos')
 
 latest_issues.each do |issue|
-  issue_url = 'https://www.tsf.pt' + issue.at('a').attr('href')
+  issue_url = 'https://sic.pt' + issue.at('a').attr('href')
 
   # Stop adding once we reach the latest already present
   break if issue_url == feed_old_first_url
 
-  issue_title = issue.at('h2').text
+  issue_title = issue.at('h2.lead').text.strip
+  issue_thumbnail = 'https:' + issue.at('img').attr('src')
+  item_content = "<a href='#{issue_url}'><img src='#{issue_thumbnail}'></a>"
 
-  video_info = Nokogiri::HTML(URI.parse(issue_url).open).at('div[id^="multimedia_content"]')
-  video_thumbnail = video_info.attr('image')
-  video_url = video_info.attr('file_android')
-
-  feed_new['items'].push(title: issue_title, id: issue_url, url: video_url, content_html: "<img src='#{video_thumbnail}'>")
+  feed_new['items'].push(title: issue_title, id: issue_url, url: issue_url, content_html: item_content)
 end
 
 # If there are no new items, inform and exit
