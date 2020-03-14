@@ -32,6 +32,9 @@ Generates feed for [The Hollywood Reporter](https://www.youtube.com/playlist?lis
 ### thiscolumnwillchangeyourlife
 Generates feed of “[This Column Will Change Your Life](http://www.theguardian.com/lifeandstyle/series/thiscolumnwillchangeyourlife)” full articles.
 
+### three-panel-soul
+Generates feed of [Three Panel Soul](http://threepanelsoul.com/)’s main comic, including the image.
+
 ### tomgauldsculturalcartoons
 Generates feed of [Tom Gauld’s cultural cartoons](http://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons).
 
