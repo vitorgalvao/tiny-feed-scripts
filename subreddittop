@@ -2,6 +2,7 @@
 
 require 'json'
 require 'nokogiri'
+require 'pathname'
 require 'rss'
 
 # Require environment variables
@@ -14,20 +15,20 @@ site_url = 'https://reddit.com/'
 feed_title = 'Subreddit top post amalgamation'
 feed_name = 'subreddittop'
 
-feed_file = File.join(ENV['FEED_EXPORT_LOCATION'], "#{feed_name}.json")
-feed_location = File.join(ENV['FEED_ONLINE_LOCATION'], "#{feed_name}.json")
+feed_file = Pathname(ENV['FEED_EXPORT_LOCATION']).join("#{feed_name}.json")
+feed_location = URI.join(ENV['FEED_ONLINE_LOCATION'], "#{feed_name}.json")
 
 feed = {
   version: 'https://jsonfeed.org/version/1',
   title: feed_title,
   home_page_url: site_url,
-  feed_url: feed_location
+  feed_url: feed_location.to_s
 }
 
 # Leave as is. Preparing the feed.
 feed_new = {}
 feed_new['items'] = []
-feed_old = JSON.parse(File.read(feed_file)) rescue { 'items' => [] }
+feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
@@ -53,4 +54,4 @@ end
 # Prepend new items to the old and limit the amount of items
 feed['items'] = (feed_new['items'] + feed_old['items']).first(100)
 
-File.write(feed_file, JSON.pretty_generate(feed))
+feed_file.write(JSON.pretty_generate(feed))
