@@ -33,7 +33,7 @@ feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
 
 # Strategy for getting new items
 check_period = 'week'
-subreddits = File.read(ENV['HOME'] + '/_vitor/dotsettings/subreddits').split("\n")
+subreddits = Pathname(ENV['HOME']).join('_vitor/dotsettings/subreddits').read.split("\n")
 
 subreddits.each do |subreddit|
   site_url = 'https://www.reddit.com/r/' + subreddit + '/top.rss?t=' + check_period + '&limit=1'
