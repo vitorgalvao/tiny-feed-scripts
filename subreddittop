@@ -29,7 +29,7 @@ feed = {
 feed_new = {}
 feed_new['items'] = []
 feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
-feed_old_first_url = feed_old['items'][0]['url'] rescue ''
+# DIFFERENT CASE FROM OTHER FEED SCRIPTS, DOES NOT NEED feed_old_first_url
 
 # Strategy for getting new items
 check_period = 'week'
