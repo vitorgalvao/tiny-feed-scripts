@@ -5,24 +5,36 @@ require 'nokogiri'
 require 'open-uri'
 require 'pathname'
 
-# Require environment variables
-abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable?(ENV['FEED_EXPORT_LOCATION'])
+# Required environment variables
+Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR']) rescue nil
+Feed_web_dir = Pathname(ENV['FEED_WEB_DIR']) rescue nil
 
-abort 'You need to set a "FEED_ONLINE_LOCATION" environment variable pointing to the web directory path where the feed will be accessible from' unless ENV['FEED_ONLINE_LOCATION']
+unless Feed_local_dir&.directory? && Feed_local_dir&.writable?
+  abort <<~ERROR
+    Missing a "FEED_LOCAL_DIR" environment variable pointing to a writable directory
+  ERROR
+end
+
+unless Feed_web_dir
+  abort <<~ERROR
+    Missing a "FEED_WEB_DIR" environment variable
+    pointing to the web directory path where the feed will be accessible from
+  ERROR
+end
 
 # Configure feed info
 site_url = 'https://forum.affinity.serif.com/index.php?/search/&q=%22Affinity%20Designer%20Customer%20Beta%22&type=forums_topic&author=MattP&nodes=15&search_and_or=and&search_in=titles&sortby=newest'
 feed_title = 'Affinity Designer Beta Features'
 feed_name = 'affinity-designer-macos-beta-features'
 
-feed_file = Pathname(ENV['FEED_EXPORT_LOCATION']).join("#{feed_name}.json")
-feed_location = URI.join(ENV['FEED_ONLINE_LOCATION'], "#{feed_name}.json")
+feed_file = Feed_local_dir.join("#{feed_name}.json")
+feed_location = Feed_web_dir.join("#{feed_name}.json")
 
 feed = {
   version: 'https://jsonfeed.org/version/1',
   title: feed_title,
   home_page_url: site_url,
-  feed_url: feed_location.to_s
+  feed_url: feed_location
 }
 
 # Leave as is. Preparing the feed.

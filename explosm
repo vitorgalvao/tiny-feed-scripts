@@ -2,13 +2,21 @@
 
 require 'nokogiri'
 require 'open-uri'
+require 'pathname'
 require 'rss'
 
-abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable?(ENV['FEED_EXPORT_LOCATION'])
+# Required environment variables
+Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR']) rescue nil
+
+unless Feed_local_dir&.directory? && Feed_local_dir&.writable?
+  abort <<~ERROR
+    Missing a "FEED_LOCAL_DIR" environment variable pointing to a writable directory
+  ERROR
+end
 
 site_rss = 'https://feeds.feedburner.com/Explosm'
 feed_name = 'explosm'
-rss_file = File.join(ENV['FEED_ONLINE_LOCATION'], "#{feed_name}.rss")
+rss_file = Feed_local_dir.join("#{feed_name}.rss")
 
 # get site rss feed
 site_feed = RSS::Parser.parse(URI.parse(site_rss).open)
@@ -19,7 +27,7 @@ article_image = 'http:' + article_page.at('#main-comic').attr('src')
 
 # create new feed (if it doesn't exist)
 # or prepare existing one (checking if retried item is new)
-if !File.file?(rss_file)
+if !rss_file.file?
   tmp_feed = Nokogiri::XML::Builder.new do |xml|
     xml.rss('version' => '2.0') {
       xml.channel {
@@ -31,12 +39,12 @@ if !File.file?(rss_file)
   end
   rss_feed = Nokogiri::XML(tmp_feed.to_xml)
 else
-  rss_feed = Nokogiri::XML(File.open(rss_file))
+  rss_feed = Nokogiri::XML(rss_file.read)
 
   # abort if most recent item link is the same as the newly retrieved one
   # else save the most recent for later, and continue
   most_recent_item_link = rss_feed.at('item').at('link').content
-  if (most_recent_item_link == article_link)
+  if most_recent_item_link == article_link
     puts 'There are no new items to add'
     exit 0
   else
@@ -56,7 +64,4 @@ end
 
 # add previously grabbed items (if any) and save
 rss_feed.at('channel').add_child(recent_items) unless recent_items.nil?
-
-File.open(rss_file, 'w') do |f|
-  f.puts rss_feed.to_xml
-end
+rss_file.write(rss_feed.to_xml)

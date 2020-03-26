@@ -3,12 +3,19 @@
 require 'nokogiri'
 require 'open-uri'
 
-abort 'You need to set a "FEED_EXPORT_LOCATION" environment variable pointing to a writable directory' unless ENV['FEED_EXPORT_LOCATION'] && Dir.exist?(ENV['FEED_EXPORT_LOCATION']) && File.writable?(ENV['FEED_EXPORT_LOCATION'])
+# Required environment variables
+Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR']) rescue nil
+
+unless Feed_local_dir&.directory? && Feed_local_dir&.writable?
+  abort <<~ERROR
+    Missing a "FEED_LOCAL_DIR" environment variable pointing to a writable directory
+  ERROR
+end
 
 base_url = 'https://www.nytimes.com'
 site_url = base_url + '/video/op-docs'
 feed_name = 'nytimesopdocs'
-rss_file = File.join(ENV['FEED_ONLINE_LOCATION'], "#{feed_name}.rss")
+rss_file = Feed_local_dir.join("#{feed_name}.rss")
 
 # get new video
 page = Nokogiri::HTML(URI.parse(site_url).open)
@@ -33,12 +40,12 @@ if !File.file?(rss_file)
   end
   rss_feed = Nokogiri::XML(tmp_feed.to_xml)
 else
-  rss_feed = Nokogiri::XML(File.open(rss_file))
+  rss_feed = Nokogiri::XML(rss_file.read)
 
   # abort if most recent item title is the same as the newly retrieved one
   # else save the most recent for later, and continue
   most_recent_item_title = rss_feed.at('item').at('title').content
-  if (most_recent_item_title == item_title)
+  if most_recent_item_title == item_title
     puts 'There are no new items to add'
     exit 0
   else
@@ -58,7 +65,4 @@ end
 
 # add previously grabbed items (if any) and save
 rss_feed.at('channel').add_child(recent_items) unless recent_items.nil?
-
-File.open(rss_file, 'w') do |f|
-  f.puts rss_feed.to_xml
-end
+rss_file.write(rss_feed.to_xml)
