@@ -2,6 +2,7 @@
 
 require 'json'
 require 'nokogiri'
+require 'open-uri'
 require 'pathname'
 require 'rss'
 
