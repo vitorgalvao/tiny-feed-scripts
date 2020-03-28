@@ -7,19 +7,21 @@ require 'pathname'
 require 'rss'
 
 # Required environment variables
-Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR']) rescue nil
-Feed_web_dir = Pathname(ENV['FEED_WEB_DIR']) rescue nil
+begin
+  Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR'])
+  Feed_web_dir = Pathname(ENV['FEED_WEB_DIR'])
 
-unless Feed_local_dir&.directory? && Feed_local_dir&.writable?
+  unless Feed_local_dir.directory? &&
+         Feed_web_dir
+    raise Errno::ENOENT
+  end
+rescue TypeError, Errno::ENOENT
   abort <<~ERROR
-    Missing a "FEED_LOCAL_DIR" environment variable pointing to a writable directory
-  ERROR
-end
+    Some required environment variables are not set correctly.
+    Full list to verify:
 
-unless Feed_web_dir
-  abort <<~ERROR
-    Missing a "FEED_WEB_DIR" environment variable
-    pointing to the web directory path where the feed will be accessible from
+    FEED_LOCAL_DIR: path to directory to read and write feed
+    FEED_WEB_DIR: url to web directory hosting the feed
   ERROR
 end
 
