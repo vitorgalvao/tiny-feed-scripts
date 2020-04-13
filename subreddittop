@@ -57,6 +57,9 @@ check_period = 'week'
 subreddits = Config_file.read.split("\n")
 
 subreddits.each do |subreddit|
+  warn "Checking #{subreddit}…"
+  sleep 3 # Avoid rate limiting
+
   site_url = 'https://www.reddit.com/r/' + subreddit + '/top.rss?t=' + check_period + '&limit=1'
 
   top_item = RSS::Parser.parse(URI.parse(site_url).open('User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64)')).items.first
