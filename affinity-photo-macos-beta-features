@@ -48,7 +48,7 @@ feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 # Strategy for getting new items
 author = 'Andy Somerfield'
 post_url =
-  Nokogiri::HTML(URI.parse(site_url).open)
+  Nokogiri::HTML(URI.open(site_url))
   .css('li.ipsStreamItem')
   .select { |post| post.at('p.ipsStreamItem_status').text.include?("#{author} posted a topic in") }
   .first
@@ -61,7 +61,7 @@ if post_url == feed_old_first_url
   exit 0
 end
 
-post = Nokogiri::HTML(URI.parse(post_url).open)
+post = Nokogiri::HTML(URI.open(post_url))
 post_title = post.at('h1.ipsType_pageTitle').text.strip
 post_content = post.at('article').at('div[data-role="commentContent"]').inner_html.strip
 
