@@ -47,7 +47,7 @@ feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-latest_issues = RSS::Parser.parse(URI.parse(site_url).open).items
+latest_issues = RSS::Parser.parse(URI.open(site_url)).items
 
 latest_issues.each do |issue|
   issue_url = issue.link
@@ -56,7 +56,7 @@ latest_issues.each do |issue|
   break if issue_url == feed_old_first_url
 
   issue_title = issue.title
-  issue_page = Nokogiri::HTML(URI.parse(issue_url).open)
+  issue_page = Nokogiri::HTML(URI.open(issue_url))
   issue_full = issue_page.at('.content__main-column--article')
   issue_tagline = issue_full.at('p').text
   issue_image = issue_full.at('picture').at('source').attr('srcset').sub(/ \d+w$/, '')
