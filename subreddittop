@@ -62,7 +62,7 @@ subreddits.each do |subreddit|
 
   site_url = 'https://www.reddit.com/r/' + subreddit + '/top.rss?t=' + check_period + '&limit=1'
 
-  top_item = RSS::Parser.parse(URI.parse(site_url).open('User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64)')).items.first
+  top_item = RSS::Parser.parse(URI.open(site_url, 'User-Agent' => 'Ruby script on linux:subreddittop:0.0.1 (no account)')).items.first
   item_url = top_item.link.href
   item_title = top_item.title.content
 
