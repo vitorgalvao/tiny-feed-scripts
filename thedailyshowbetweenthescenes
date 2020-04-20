@@ -46,7 +46,7 @@ feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-latest_issues = Nokogiri::XML(URI.parse(site_url).open).remove_namespaces!.css('entry').select { |e| e.at('title').text.match?('Between the Scenes') }
+latest_issues = Nokogiri::XML(URI.open(site_url)).remove_namespaces!.css('entry').select { |e| e.at('title').text.match?('Between the Scenes') }
 
 latest_issues.each do |issue|
   issue_url = issue.at('link').attr('href')
