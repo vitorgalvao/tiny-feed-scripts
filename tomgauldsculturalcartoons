@@ -23,10 +23,10 @@ feed_name = 'tomgauldsculturalcartoons'
 rss_file = Feed_local_dir.join("#{feed_name}.rss")
 
 # get site rss feed
-site_feed = RSS::Parser.parse(URI.parse(site_rss).open)
+site_feed = RSS::Parser.parse(URI.open(site_rss))
 article_link = site_feed.items[0].link
 article_title = site_feed.items[0].title
-article_page = Nokogiri::HTML(URI.parse(article_link).open)
+article_page = Nokogiri::HTML(URI.open(article_link))
 article_image = article_page.at('picture').at('source').attr('srcset').sub(%r{ \d+w$}, '')
 article_description = article_page.at('.content__standfirst').inner_html
 
