@@ -2,7 +2,6 @@
 
 require 'nokogiri'
 require 'open-uri'
-require 'rss'
 
 # Required environment variables
 begin
@@ -18,17 +17,20 @@ rescue TypeError, Errno::ENOENT
   ERROR
 end
 
-site_rss = 'https://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/rss'
-feed_name = 'tomgauldsculturalcartoons'
+site_url = 'https://www.penny-arcade.com/comic'
+feed_name = 'penny-arcade'
 rss_file = Feed_local_dir.join("#{feed_name}.rss")
 
-# get site rss feed
-site_feed = RSS::Parser.parse(URI.open(site_rss))
-article_link = site_feed.items[0].link
-article_title = site_feed.items[0].title
-article_page = Nokogiri::HTML(URI.open(article_link))
-article_image = article_page.at('picture').at('source').attr('srcset').sub(%r{ \d+w$}, '')
-article_description = article_page.at('.content__standfirst').inner_html
+# get new comic
+page = Nokogiri::HTML(URI.open(site_url))
+description_page_url = page.at('.comicTag a').attr('href')
+description_page_url = description_page_url.sub('http', 'https') # needed while the comic page links to a description page with http (that then tries to redirect to https and makes open-uri choke)
+description_page = Nokogiri::HTML(URI.open(description_page_url))
+
+comic_title = page.at('.comicTag h2').text
+comic_link = description_page_url.sub('/news/post/', '/comic/')
+comic_image = page.at('#comicFrame img').attr('src')
+comic_description = description_page.at('.copy').inner_html
 
 # create new feed (if it doesn't exist)
 # or prepare existing one (checking if retried item is new)
@@ -36,9 +38,9 @@ if !File.file?(rss_file)
   tmp_feed = Nokogiri::XML::Builder.new do |xml|
     xml.rss('version' => '2.0') {
       xml.channel {
-        xml.title 'Tom Gauld’s cultural cartoons'
-        xml.link 'http://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/'
-        xml.description 'RSS feed of Tom Gauld’s cultural cartoons'
+        xml.title 'Penny Arcade'
+        xml.link site_url
+        xml.description 'Penny Arcade comic'
       }
     }
   end
@@ -46,10 +48,11 @@ if !File.file?(rss_file)
 else
   rss_feed = Nokogiri::XML(rss_file.read)
 
+
   # abort if most recent item link is the same as the newly retrieved one
   # else save the most recent for later, and continue
   most_recent_item_link = rss_feed.at('item').at('link').content
-  if (most_recent_item_link == article_link)
+  if most_recent_item_link == comic_link
     puts 'There are no new items to add'
     exit 0
   else
@@ -61,9 +64,9 @@ end
 # add new item to feed
 Nokogiri::XML::Builder.with(rss_feed.at('channel')) do |xml|
   xml.item {
-    xml.title article_title
-    xml.link article_link
-    xml.description "<img src='#{article_image}'>#{article_description}"
+    xml.title comic_title
+    xml.link comic_link
+    xml.description "<img src='#{comic_image}'>#{comic_description}"
   }
 end
 

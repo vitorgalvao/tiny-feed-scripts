@@ -4,14 +4,17 @@ require 'json'
 require 'nokogiri'
 require 'open-uri'
 require 'pathname'
+require 'rss'
 
 # Required environment variables
 begin
   Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR'])
   Feed_web_dir = Pathname(ENV['FEED_WEB_DIR'])
+  Feed_settings_dir = Pathname(ENV['FEED_SETTINGS_DIR'])
 
   unless Feed_local_dir.directory? &&
-         Feed_web_dir
+         Feed_web_dir &&
+         Feed_settings_dir.directory?
     raise Errno::ENOENT
   end
 rescue TypeError, Errno::ENOENT
@@ -21,13 +24,14 @@ rescue TypeError, Errno::ENOENT
 
     FEED_LOCAL_DIR: path to directory to read and write feed
     FEED_WEB_DIR: url to web directory hosting the feed
+    FEED_SETTINGS_DIR: path to directory containing feed script config files
   ERROR
 end
 
 # Configure feed info
-site_url = 'https://www.youtube.com/feeds/videos.xml?channel_id=UCwWhs_6x42TyRM4Wstoq8HA'
-feed_title = 'The Daily Show Between the Scenes'
-feed_name = 'thedailyshowbetweenthescenes'
+site_url = 'https://reddit.com/'
+feed_title = 'Subreddit top post amalgamation'
+feed_name = 'subreddit-top'
 
 feed_file = Feed_local_dir.join("#{feed_name}.json")
 feed_location = Feed_web_dir.join("#{feed_name}.json")
@@ -43,23 +47,26 @@ feed = {
 feed_new = {}
 feed_new['items'] = []
 feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
-feed_old_first_url = feed_old['items'][0]['url'] rescue ''
+# DIFFERENT CASE FROM OTHER FEED SCRIPTS, DOES NOT NEED feed_old_first_url
 
 # Strategy for getting new items
-latest_issues = Nokogiri::XML(URI.open(site_url)).remove_namespaces!.css('entry').select { |e| e.at('title').text.match?('Between the Scenes') }
+Config_file = Feed_settings_dir.join('subreddits.txt')
+abort "Missing #{Config_file}" unless Config_file.file?
 
-latest_issues.each do |issue|
-  issue_url = issue.at('link').attr('href')
+check_period = 'week'
+subreddits = Config_file.read.split("\n")
 
-  # Stop adding once we reach the latest already present
-  break if issue_url == feed_old_first_url
+subreddits.each do |subreddit|
+  warn "Checking #{subreddit}…"
+  sleep 3 # Avoid rate limiting
 
-  issue_title = issue.at('title').text
-  issue_thumbnail = issue.at('thumbnail').attr('url')
-  issue_description = issue.at('description').text.sub(/\n.*/m, '')
-  item_content = "<p>#{issue_description}</p><img src='#{issue_thumbnail}'>"
+  site_url = 'https://www.reddit.com/r/' + subreddit + '/top.rss?t=' + check_period + '&limit=1'
 
-  feed_new['items'].push(title: issue_title, id: issue_url, url: issue_url, content_html: item_content)
+  top_item = RSS::Parser.parse(URI.open(site_url, 'User-Agent' => 'Ruby script on linux:subreddittop:0.0.1 (no account)')).items.first
+  item_url = top_item.link.href
+  item_title = top_item.title.content
+
+  feed_new['items'].push(title: item_title, id: item_url, url: item_url, content_html: 'From r/' + subreddit )
 end
 
 # If there are no new items, inform and exit
@@ -69,6 +76,6 @@ if feed_new['items'].empty?
 end
 
 # Prepend new items to the old and limit the amount of items
-feed['items'] = (feed_new['items'] + feed_old['items']).first(20)
+feed['items'] = (feed_new['items'] + feed_old['items']).first(100)
 
 feed_file.write(JSON.pretty_generate(feed))

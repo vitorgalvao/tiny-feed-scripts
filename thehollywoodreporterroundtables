@@ -27,7 +27,7 @@ end
 # Configure feed info
 site_url = 'https://www.youtube.com/feeds/videos.xml?playlist_id=PLhKcXp78wsasvx-W9mZqEql3RB6xSciX4'
 feed_title = 'The Hollywood Reporter Roundtables'
-feed_name = 'thehollywoodreporterroundtables'
+feed_name = 'the-hollywood-reporter-roundtables'
 
 feed_file = Feed_local_dir.join("#{feed_name}.json")
 feed_location = Feed_web_dir.join("#{feed_name}.json")

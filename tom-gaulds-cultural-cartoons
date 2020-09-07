@@ -2,9 +2,9 @@
 
 require 'nokogiri'
 require 'open-uri'
+require 'rss'
 
 # Required environment variables
-# LOCAL
 begin
   Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR'])
 
@@ -18,19 +18,17 @@ rescue TypeError, Errno::ENOENT
   ERROR
 end
 
-base_url = 'https://www.nytimes.com'
-site_url = base_url + '/video/op-docs'
-feed_name = 'nytimesopdocs'
+site_rss = 'https://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/rss'
+feed_name = 'tom-gaulds-cultural-cartoons'
 rss_file = Feed_local_dir.join("#{feed_name}.rss")
 
-# get new video
-page = Nokogiri::HTML(URI.open(site_url))
-latest_video = page.at('#recent-episodes-inner > ul').at('li')
-video_link = base_url + latest_video.css('a')[1].attr('href')
-video_title = latest_video.at('h3').text
-video_duration = latest_video.at('h5').text.strip
-item_title = video_title + ' (' + video_duration + ')'
-video_image = latest_video.at('img').attr('data-src')
+# get site rss feed
+site_feed = RSS::Parser.parse(URI.open(site_rss))
+article_link = site_feed.items[0].link
+article_title = site_feed.items[0].title
+article_page = Nokogiri::HTML(URI.open(article_link))
+article_image = article_page.at('picture').at('source').attr('srcset').sub(%r{ \d+w$}, '')
+article_description = article_page.at('.content__standfirst').inner_html
 
 # create new feed (if it doesn't exist)
 # or prepare existing one (checking if retried item is new)
@@ -38,9 +36,9 @@ if !File.file?(rss_file)
   tmp_feed = Nokogiri::XML::Builder.new do |xml|
     xml.rss('version' => '2.0') {
       xml.channel {
-        xml.title 'New York Times Op-Docs'
-        xml.link site_url
-        xml.description 'RSS feed of New York Times Op-Docs'
+        xml.title 'Tom Gauld’s cultural cartoons'
+        xml.link 'http://www.theguardian.com/books/series/tom-gauld-s-cultural-cartoons/'
+        xml.description 'RSS feed of Tom Gauld’s cultural cartoons'
       }
     }
   end
@@ -48,10 +46,10 @@ if !File.file?(rss_file)
 else
   rss_feed = Nokogiri::XML(rss_file.read)
 
-  # abort if most recent item title is the same as the newly retrieved one
+  # abort if most recent item link is the same as the newly retrieved one
   # else save the most recent for later, and continue
-  most_recent_item_title = rss_feed.at('item').at('title').content
-  if most_recent_item_title == item_title
+  most_recent_item_link = rss_feed.at('item').at('link').content
+  if (most_recent_item_link == article_link)
     puts 'There are no new items to add'
     exit 0
   else
@@ -63,9 +61,9 @@ end
 # add new item to feed
 Nokogiri::XML::Builder.with(rss_feed.at('channel')) do |xml|
   xml.item {
-    xml.title item_title
-    xml.link video_link
-    xml.description '<img src="' + video_image + '">'
+    xml.title article_title
+    xml.link article_link
+    xml.description "<img src='#{article_image}'>#{article_description}"
   }
 end
 
