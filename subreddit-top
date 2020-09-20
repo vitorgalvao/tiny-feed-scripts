@@ -53,20 +53,58 @@ feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
 Config_file = Feed_settings_dir.join('subreddits.txt')
 abort "Missing #{Config_file}" unless Config_file.file?
 
-check_period = 'week'
-subreddits = Config_file.read.split("\n")
+Check_period = 'week'
+Subreddits = Config_file.read.split("\n")
+Image_extensions = ['.gif', '.jpg', '.png']
+User_agent = 'Ruby script on linux:subreddittop:0.0.1 (no account)'
 
-subreddits.each do |subreddit|
+Subreddits.each do |subreddit|
   warn "Checking #{subreddit}…"
   sleep 3 # Avoid rate limiting
 
-  site_url = 'https://www.reddit.com/r/' + subreddit + '/top.rss?t=' + check_period + '&limit=1'
+  site_url = 'https://www.reddit.com/r/' + subreddit + '/top.rss?t=' + Check_period + '&limit=1'
 
-  top_item = RSS::Parser.parse(URI.open(site_url, 'User-Agent' => 'Ruby script on linux:subreddittop:0.0.1 (no account)')).items.first
+  top_item = RSS::Parser.parse(URI.open(site_url, 'User-Agent' => User_agent)).items.first
   item_url = top_item.link.href
   item_title = top_item.title.content
 
-  feed_new['items'].push(title: item_title, id: item_url, url: item_url, content_html: 'From r/' + subreddit )
+  top_post = lambda {
+    data = JSON.parse(URI.open(
+      item_url + '.json', 'User-Agent' => User_agent
+    ).read).first['data']['children'].first['data']
+
+    {
+      text: data['self_text'],
+      url: data['url'],
+      video_preview: data.dig('preview', 'reddit_video_preview', 'fallback_url')
+    }
+  }.call
+
+  content = lambda {
+    html = []
+    html.push('<p>From r/' + subreddit + '</p>')
+    html.push(top_post[:text]) unless top_post[:text].nil?
+
+    return html if top_post[:url] == item_url
+
+    # If post is video, embed it
+    if top_post[:video_preview]
+      html.push('<video><source src="' + top_post[:video_preview] + '"></video>')
+      return html
+    end
+
+    # If post is image, embed it
+    if Image_extensions.any? { |ext| Pathname(top_post[:url]).extname == ext }
+      html.push('<img src="' + top_post[:url] + '">')
+      return html
+    end
+
+    html.push('<a href="' + top_post[:url] + '">' + top_post[:url] + '</a>')
+
+    html
+  }.call.join
+
+  feed_new['items'].push(title: item_title, id: item_url, url: item_url, content_html: content)
 end
 
 # If there are no new items, inform and exit
