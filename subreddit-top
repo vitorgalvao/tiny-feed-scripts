@@ -74,7 +74,7 @@ Subreddits.each do |subreddit|
     ).read).first['data']['children'].first['data']
 
     {
-      text: data['self_text'],
+      text: data['selftext_html'],
       url: data['url'],
       video_preview: data.dig('preview', 'reddit_video_preview', 'fallback_url')
     }
