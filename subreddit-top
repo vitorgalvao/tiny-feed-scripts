@@ -76,7 +76,7 @@ Subreddits.each do |subreddit|
     {
       text: Nokogiri::HTML.parse(data['selftext_html']),
       url: data['url'],
-      video_preview: data.dig('preview', 'reddit_video_preview', 'fallback_url')
+      video_preview: data.dig('secure_media', 'reddit_video', 'fallback_url') || data.dig('preview', 'reddit_video_preview', 'fallback_url')
     }
   }.call
 
