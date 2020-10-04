@@ -4,7 +4,6 @@ require 'json'
 require 'nokogiri'
 require 'open-uri'
 require 'pathname'
-require 'rss'
 
 # Required environment variables
 begin
@@ -29,7 +28,7 @@ rescue TypeError, Errno::ENOENT
 end
 
 # Configure feed info
-site_url = 'https://reddit.com/'
+site_url = 'https://reddit.com'
 feed_title = 'Subreddit top post amalgamation'
 feed_name = 'subreddit-top'
 
@@ -62,11 +61,13 @@ Subreddits.each do |subreddit|
   warn "Checking #{subreddit}…"
   sleep 3 # Avoid rate limiting
 
-  site_url = 'https://www.reddit.com/r/' + subreddit + '/top.rss?t=' + Check_period + '&limit=1'
+  sub_url = 'https://www.reddit.com/r/' + subreddit + '/top.json?t=' + Check_period + '&limit=1'
 
-  top_item = RSS::Parser.parse(URI.open(site_url, 'User-Agent' => User_agent)).items.first
-  item_url = top_item.link.href
-  item_title = top_item.title.content
+  top_item = JSON.parse(URI.open(
+    sub_url, 'User-Agent' => User_agent
+  ).read)['data']['children'].first['data']
+  item_url = site_url + top_item['permalink']
+  item_title = top_item['title']
 
   top_post = lambda {
     data = JSON.parse(URI.open(
