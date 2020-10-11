@@ -69,6 +69,15 @@ Subreddits.each do |subreddit|
   item_url = site_url + top_item['permalink']
   item_title = top_item['title']
 
+  # URI escaping is complex without an external gem or a non-deprecated feature
+  # For now, skip URLs that are no ASCII
+  # https://stackoverflow.com/questions/59402948/simple-alternative-to-uri-escape
+  begin
+    URI.parse(item_url)
+  rescue URI::InvalidURIError
+    next
+  end
+
   top_post = lambda {
     data = JSON.parse(URI.open(
       item_url + '.json', 'User-Agent' => User_agent
