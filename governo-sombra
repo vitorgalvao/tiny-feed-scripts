@@ -25,7 +25,7 @@ rescue TypeError, Errno::ENOENT
 end
 
 # Configure feed info
-site_url = 'https://sic.pt/Programas/governo-sombra/videos'
+site_url = 'https://sicnoticias.pt/programas/governo-sombra'
 feed_title = 'Governo Sombra'
 feed_name = 'governo-sombra'
 
@@ -46,19 +46,24 @@ feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
 feed_old_first_url = feed_old['items'][0]['url'] rescue ''
 
 # Strategy for getting new items
-latest_issues = Nokogiri::HTML(URI.open(site_url)).css('article.MC-programas_governo-sombra_videos')
+latest_issues = Nokogiri::HTML(URI.open(site_url)).css('article.MC-programas_governo-sombra')
 
 latest_issues.each do |issue|
-  issue_url = 'https://sic.pt' + issue.at('a').attr('href')
+  # If video duration has less than 5 characters (e.g. "2:39"),
+  # it is not a full show
+  next if issue.at('.video-duration').text.strip.chars.count < 5
+
+  issue_url = 'https://sicnoticias.pt' + issue.at('a').attr('href')
 
   # Stop adding once we reach the latest already present
   break if issue_url == feed_old_first_url
 
-  issue_title = issue.at('h2.lead').text.strip
+  issue_title = issue.at('h1.title').text.strip
   issue_thumbnail = 'https:' + issue.at('img').attr('src')
   item_content = "<a href='#{issue_url}'><img src='#{issue_thumbnail}'></a>"
+  playlist_url = Nokogiri::HTML(URI.open(issue_url)).to_html.match(/"(.+\.m3u8)"/)[1]
 
-  feed_new['items'].push(title: issue_title, id: issue_url, url: issue_url, content_html: item_content)
+  feed_new['items'].push(title: issue_title, id: issue_url, url: playlist_url, content_html: item_content)
 end
 
 # If there are no new items, inform and exit
