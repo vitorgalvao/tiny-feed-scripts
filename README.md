@@ -11,9 +11,6 @@ Generates feed of the newest release post of [Affinity Photo for macOS](https://
 ### explosm
 Generates feed to [Explosm](http://explosm.net/)’s main comic, including the image.
 
-### governo-sombra
-Generates feed of [Governo Sombra](https://www.tsf.pt/programa/governo-sombra/artigos.html)’s videos.
-
 ### ny-times-op-docs
 Generates feed of [New York Times Op-Docs](https://www.nytimes.com/video/op-docs).
 
