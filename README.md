@@ -11,6 +11,9 @@ Generates feed of the newest release post of [Affinity Photo for macOS](https://
 ### explosm
 Generates feed to [Explosm](http://explosm.net/)’s main comic, including the image.
 
+### newgrounds-featured-movies
+Generates feed of [Newgrounds](https://www.newgrounds.com/)’s Featured Movies.
+
 ### ny-times-op-docs
 Generates feed of [New York Times Op-Docs](https://www.nytimes.com/video/op-docs).
 
