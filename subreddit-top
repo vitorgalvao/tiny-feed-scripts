@@ -1,21 +1,25 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
+require 'cgi'
 require 'json'
 require 'nokogiri'
 require 'open-uri'
 require 'pathname'
 
-# Required environment variables
-begin
-  Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR'])
-  Feed_web_dir = Pathname(ENV['FEED_WEB_DIR'])
-  Feed_settings_dir = Pathname(ENV['FEED_SETTINGS_DIR'])
+########## EDIT ##########
+# Configure feed info
+Site_url = URI.parse('https://reddit.com/')
+Feed_title = 'Subreddit top post amalgamation'
 
-  unless Feed_local_dir.directory? &&
-         Feed_web_dir &&
-         Feed_settings_dir.directory?
-    raise Errno::ENOENT
-  end
+########## LEAVE ##########
+# Check for common required environment variables
+begin
+  Feed_local_dir = Pathname.new(ENV['FEED_LOCAL_DIR'])
+  Feed_web_dir = Pathname.new(ENV['FEED_WEB_DIR'])
+  Feed_settings_dir = Pathname.new(ENV['FEED_SETTINGS_DIR'])
+
+  raise Errno::ENOENT unless Feed_local_dir.directory? && Feed_web_dir && Feed_settings_dir.directory?
 rescue TypeError, Errno::ENOENT
   abort <<~ERROR
     Some required environment variables are not set correctly.
@@ -27,61 +31,42 @@ rescue TypeError, Errno::ENOENT
   ERROR
 end
 
-# Configure feed info
-site_url = 'https://reddit.com'
-feed_title = 'Subreddit top post amalgamation'
-feed_name = 'subreddit-top'
+# Prepare the feed
+Feed_slug = Feed_title.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+Feed_file = Feed_local_dir.join("#{Feed_slug}.json")
+Feed_location = Feed_web_dir.join(Feed_file.basename)
 
-feed_file = Feed_local_dir.join("#{feed_name}.json")
-feed_location = Feed_web_dir.join("#{feed_name}.json")
+Previous_items = begin
+  JSON.parse(Feed_file.read)['items']
+rescue Errno::ENOENT
+  [{}]
+end
 
-feed = {
-  version: 'https://jsonfeed.org/version/1',
-  title: feed_title,
-  home_page_url: site_url,
-  feed_url: feed_location
-}
+Previous_newest_id = Previous_items.first['id']
 
-# Leave as is. Preparing the feed.
-feed_new = {}
-feed_new['items'] = []
-feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
-# DIFFERENT CASE FROM OTHER FEED SCRIPTS, DOES NOT NEED feed_old_first_url
-
+########## EDIT ##########
 # Strategy for getting new items
 Config_file = Feed_settings_dir.join('subreddits.txt')
 abort "Missing #{Config_file}" unless Config_file.file?
 
 Check_period = 'week'
-Subreddits = Config_file.read.split("\n")
+Subreddits = Config_file.readlines.map(&:strip)
 Image_extensions = ['.gif', '.jpg', '.png']
 User_agent = 'Ruby script on linux:subreddittop:0.0.1 (no account)'
 
-Subreddits.each do |subreddit|
+New_items = Subreddits.each_with_object([]) do |subreddit, array|
   warn "Checking #{subreddit}…"
   sleep 3 # Avoid rate limiting
 
-  sub_url = 'https://www.reddit.com/r/' + subreddit + '/top.json?t=' + Check_period + '&limit=1'
+  sub_url = URI.parse("https://www.reddit.com/r/#{subreddit}/top.json?t=#{Check_period}&limit=1")
 
-  top_item = JSON.parse(URI.open(
-    sub_url, 'User-Agent' => User_agent
-  ).read)['data']['children'].first['data']
-  item_url = site_url + top_item['permalink']
+  top_item = JSON.parse(sub_url.open('User-Agent' => User_agent).read)['data']['children'].first['data']
+  item_url = URI.join(Site_url, top_item['permalink'].split('/').map { |a| CGI.escape(a) }.join('/'))
   item_title = top_item['title']
 
-  # URI escaping is complex without an external gem or a non-deprecated feature
-  # For now, skip URLs that are no ASCII
-  # https://stackoverflow.com/questions/59402948/simple-alternative-to-uri-escape
-  begin
-    URI.parse(item_url)
-  rescue URI::InvalidURIError
-    next
-  end
-
   top_post = lambda {
-    data = JSON.parse(URI.open(
-      item_url + '.json', 'User-Agent' => User_agent
-    ).read).first['data']['children'].first['data']
+    json_url = URI.parse("#{item_url}.json")
+    data = JSON.parse(json_url.open('User-Agent' => User_agent).read).first['data']['children'].first['data']
 
     {
       text: Nokogiri::HTML.parse(data['selftext_html']),
@@ -92,38 +77,49 @@ Subreddits.each do |subreddit|
 
   content = lambda {
     html = []
-    html.push('<p>From r/' + subreddit + '</p>')
+    html.push("<p>From r/#{subreddit}</p>")
     html.push(top_post[:text]) unless top_post[:text].nil?
 
+    # If post is just text, return it now
     return html if top_post[:url] == item_url
 
     # If post is video, embed it
     if top_post[:video_preview]
-      html.push('<video><source src="' + top_post[:video_preview] + '"></video>')
+      html.push("<video><source src='#{top_post[:video_preview]}'></video>")
       return html
     end
 
     # If post is image, embed it
     if Image_extensions.any? { |ext| Pathname(top_post[:url]).extname == ext }
-      html.push('<img src="' + top_post[:url] + '">')
+      html.push("<img src='#{top_post[:url]}'>")
       return html
     end
 
-    html.push('<a href="' + top_post[:url] + '">' + top_post[:url] + '</a>')
+    # If post is a URL
+    html.push("<a href='#{top_post[:url]}'>#{top_post[:url]}</a>")
 
     html
   }.call.join
 
-  feed_new['items'].push(title: item_title, id: item_url, url: item_url, content_html: content)
+  array.push(title: item_title, id: item_url, url: item_url, content_html: content)
 end
 
+########## LEAVE ##########
 # If there are no new items, inform and exit
-if feed_new['items'].empty?
-  puts 'There are no new items to add'
+if New_items.empty?
+  puts 'No new items to add'
   exit 0
 end
 
-# Prepend new items to the old and limit the amount of items
-feed['items'] = (feed_new['items'] + feed_old['items']).first(100)
+# Rebuild feed
+Feed = {
+  version: 'https://jsonfeed.org/version/1',
+  title: Feed_title,
+  home_page_url: Site_url.to_s,
+  feed_url: Feed_location.to_path,
 
-feed_file.write(JSON.pretty_generate(feed))
+  # Prepend new items to the old and limit the amount of items
+  items: (New_items + Previous_items).first(100)
+}
+
+Feed_file.write(JSON.pretty_generate(Feed))
