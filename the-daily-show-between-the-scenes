@@ -1,19 +1,24 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'json'
+require 'net/http'
 require 'nokogiri'
-require 'open-uri'
 require 'pathname'
 
-# Required environment variables
-begin
-  Feed_local_dir = Pathname(ENV['FEED_LOCAL_DIR'])
-  Feed_web_dir = Pathname(ENV['FEED_WEB_DIR'])
+########## EDIT ##########
+# Configure feed info
+Site_url = URI.parse('https://www.youtube.com/feeds/videos.xml?channel_id=UCwWhs_6x42TyRM4Wstoq8HA')
+Feed_title = 'The Daily Show Between the Scenes'
 
-  unless Feed_local_dir.directory? &&
-         Feed_web_dir
-    raise Errno::ENOENT
-  end
+########## LEAVE ##########
+# Check for common required environment variables
+begin
+  Feed_local_dir = Pathname.new(ENV['FEED_LOCAL_DIR'])
+  Feed_web_dir = Pathname.new(ENV['FEED_WEB_DIR'])
+  Feed_settings_dir = Pathname.new(ENV['FEED_SETTINGS_DIR'])
+
+  raise Errno::ENOENT unless Feed_local_dir.directory? && Feed_web_dir && Feed_settings_dir.directory?
 rescue TypeError, Errno::ENOENT
   abort <<~ERROR
     Some required environment variables are not set correctly.
@@ -21,54 +26,60 @@ rescue TypeError, Errno::ENOENT
 
     FEED_LOCAL_DIR: path to directory to read and write feed
     FEED_WEB_DIR: url to web directory hosting the feed
+    FEED_SETTINGS_DIR: path to directory containing feed script config files
   ERROR
 end
 
-# Configure feed info
-site_url = 'https://www.youtube.com/feeds/videos.xml?channel_id=UCwWhs_6x42TyRM4Wstoq8HA'
-feed_title = 'The Daily Show Between the Scenes'
-feed_name = 'the-daily-show-between-the-scenes'
+# Prepare the feed
+Feed_slug = Feed_title.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+Feed_file = Feed_local_dir.join("#{Feed_slug}.json")
+Feed_location = Feed_web_dir.join(Feed_file.basename)
 
-feed_file = Feed_local_dir.join("#{feed_name}.json")
-feed_location = Feed_web_dir.join("#{feed_name}.json")
-
-feed = {
-  version: 'https://jsonfeed.org/version/1',
-  title: feed_title,
-  home_page_url: site_url,
-  feed_url: feed_location
-}
-
-# Leave as is. Preparing the feed.
-feed_new = {}
-feed_new['items'] = []
-feed_old = JSON.parse(feed_file.read) rescue { 'items' => [] }
-feed_old_first_url = feed_old['items'][0]['url'] rescue ''
-
-# Strategy for getting new items
-latest_issues = Nokogiri::XML(URI.open(site_url)).remove_namespaces!.css('entry').select { |e| e.at('title').text.match?('Between the Scenes') }
-
-latest_issues.each do |issue|
-  issue_url = issue.at('link').attr('href')
-
-  # Stop adding once we reach the latest already present
-  break if issue_url == feed_old_first_url
-
-  issue_title = issue.at('title').text
-  issue_thumbnail = issue.at('thumbnail').attr('url')
-  issue_description = issue.at('description').text.sub(/\n.*/m, '')
-  item_content = "<p>#{issue_description}</p><img src='#{issue_thumbnail}'>"
-
-  feed_new['items'].push(title: issue_title, id: issue_url, url: issue_url, content_html: item_content)
+Previous_items = begin
+  JSON.parse(Feed_file.read)['items']
+rescue Errno::ENOENT
+  [{}]
 end
 
+Previous_newest_id = Previous_items.first['id']
+
+########## EDIT ##########
+# Strategy for getting new items
+Latest_entries = Nokogiri::XML(Net::HTTP.get(Site_url))
+                         .remove_namespaces!
+                         .css('entry')
+                         .select { |e| e.at('title').text.match?('Between the Scenes') }
+
+New_items = Latest_entries.each_with_object([]) do |entry, array|
+  entry_url = entry.at('link').attr('href')
+
+  # Stop adding once we reach the latest already present
+  break if entry_url == Previous_newest_id
+
+  entry_title = entry.at('title').text
+  entry_thumbnail = entry.at('thumbnail').attr('url')
+  entry_description = entry.at('description').text.sub(/\n.*/m, '')
+  item_content = "<p>#{entry_description}</p><img src='#{entry_thumbnail}'>"
+
+  array.push(title: entry_title, id: entry_url, url: entry_url, content_html: item_content)
+end
+
+########## LEAVE ##########
 # If there are no new items, inform and exit
-if feed_new['items'].empty?
-  puts 'There are no new items to add'
+if New_items.empty?
+  puts 'No new items to add'
   exit 0
 end
 
-# Prepend new items to the old and limit the amount of items
-feed['items'] = (feed_new['items'] + feed_old['items']).first(20)
+# Rebuild feed
+Feed = {
+  version: 'https://jsonfeed.org/version/1',
+  title: Feed_title,
+  home_page_url: Site_url.to_s,
+  feed_url: Feed_location.to_path,
 
-feed_file.write(JSON.pretty_generate(feed))
+  # Prepend new items to the old and limit the amount of items
+  items: (New_items + Previous_items).first(100)
+}
+
+Feed_file.write(JSON.pretty_generate(Feed))
