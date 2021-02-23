@@ -3,8 +3,9 @@
 
 require 'cgi'
 require 'json'
+require 'net/http'
 require 'nokogiri'
-require 'open-uri'
+require 'uri'
 require 'pathname'
 
 ########## EDIT ##########
@@ -54,19 +55,31 @@ Subreddits = Config_file.readlines.map(&:strip)
 Image_extensions = ['.gif', '.jpg', '.png']
 User_agent = 'Ruby script on linux:subreddittop:0.0.1 (no account)'
 
+def fetch_reddit_json(url)
+  response = Net::HTTP.get_response(url, 'User-Agent' => User_agent)
+
+  case response
+  when Net::HTTPSuccess
+    JSON.parse(response.body)
+  when Net::HTTPRedirection
+    location = URI.parse(response['location'])
+    fetch_reddit_json(location)
+  end
+end
+
 New_items = Subreddits.each_with_object([]) do |subreddit, array|
   warn "Checking #{subreddit}…"
   sleep 3 # Avoid rate limiting
 
   sub_url = URI.parse("https://www.reddit.com/r/#{subreddit}/top.json?t=#{Check_period}&limit=1")
 
-  top_item = JSON.parse(sub_url.open('User-Agent' => User_agent).read)['data']['children'].first['data']
+  top_item = fetch_reddit_json(sub_url)['data']['children'].first['data']
   item_url = URI.join(Site_url, top_item['permalink'].split('/').map { |a| CGI.escape(a) }.join('/'))
   item_title = top_item['title']
 
   top_post = lambda {
     json_url = URI.parse("#{item_url}.json")
-    data = JSON.parse(json_url.open('User-Agent' => User_agent).read).first['data']['children'].first['data']
+    data = fetch_reddit_json(json_url).first['data']['children'].first['data']
 
     {
       text: Nokogiri::HTML.parse(data['selftext_html']),
