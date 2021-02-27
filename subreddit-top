@@ -53,19 +53,31 @@ abort "Missing #{Config_file}" unless Config_file.file?
 Check_period = 'week'
 Subreddits = Config_file.readlines.map(&:strip)
 Image_extensions = ['.gif', '.jpg', '.png']
-User_agent = 'Ruby script on linux:subreddittop:0.0.1 (no account)'
+User_agent = 'Listing top posts on a private RSS feed on linux:subreddittop:0.0.1 (no account)'
 
-def fetch_reddit_json(url)
-  response = Net::HTTP.get_response(url, 'User-Agent' => User_agent)
+fetch_reddit_json = lambda { |user_agent, url|
+  begin
+    tries ||= 3
 
-  case response
-  when Net::HTTPSuccess
-    JSON.parse(response.body)
-  when Net::HTTPRedirection
-    location = URI.parse(response['location'])
-    fetch_reddit_json(location)
+    response = Net::HTTP.get_response(url, 'User-Agent' => user_agent)
+
+    case response
+    when Net::HTTPSuccess
+      JSON.parse(response.body)
+    when Net::HTTPRedirection
+      location = URI.parse(response['location'])
+      fetch_reddit_json(location)
+    end
+  rescue Net::OpenTimeout
+    unless (tries -= 1).zero?
+      puts 'Encountered a timeout. Retrying in a few seconds.'
+      sleep 10
+      retry
+    end
+
+    abort 'Failed to get JSON.'
   end
-end
+}.curry.call(User_agent)
 
 New_items = Subreddits.each_with_object([]) do |subreddit, array|
   warn "Checking #{subreddit}…"
@@ -73,13 +85,13 @@ New_items = Subreddits.each_with_object([]) do |subreddit, array|
 
   sub_url = URI.parse("https://www.reddit.com/r/#{subreddit}/top.json?t=#{Check_period}&limit=1")
 
-  top_item = fetch_reddit_json(sub_url)['data']['children'].first['data']
+  top_item = fetch_reddit_json.call(sub_url)['data']['children'].first['data']
   item_url = URI.join(Site_url, top_item['permalink'].split('/').map { |a| CGI.escape(a) }.join('/'))
   item_title = top_item['title']
 
   top_post = lambda {
     json_url = URI.parse("#{item_url}.json")
-    data = fetch_reddit_json(json_url).first['data']['children'].first['data']
+    data = fetch_reddit_json.call(json_url).first['data']['children'].first['data']
 
     {
       text: Nokogiri::HTML.parse(data['selftext_html']),
