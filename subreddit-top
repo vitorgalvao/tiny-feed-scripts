@@ -51,7 +51,7 @@ Config_file = Feed_settings_dir.join('subreddits.txt')
 abort "Missing #{Config_file}" unless Config_file.file?
 
 Check_period = 'week'
-Subreddits = Config_file.readlines.map(&:strip)
+Subreddits = Config_file.readlines(chomp: true)
 Image_extensions = ['.gif', '.jpg', '.png']
 User_agent = 'Listing top posts on a private RSS feed on linux:subreddittop:0.0.1 (no account)'
 
