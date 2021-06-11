@@ -89,39 +89,43 @@ New_items = Subreddits.each_with_object([]) do |subreddit, array|
   item_url = URI.join(Site_url, top_item['permalink'].split('/').map { |a| CGI.escape(a) }.join('/'))
   item_title = top_item['title']
 
-  top_post = lambda {
-    json_url = URI.parse("#{item_url}.json")
-    data = fetch_reddit_json.call(json_url).first['data']['children'].first['data']
-
-    {
-      text: Nokogiri::HTML.parse(data['selftext_html']),
-      url: data['url'],
-      video_preview: data.dig('secure_media', 'reddit_video', 'fallback_url') || data.dig('preview', 'reddit_video_preview', 'fallback_url')
-    }
-  }.call
-
   content = lambda {
+    top_post_json_url = URI.parse("#{item_url}.json")
+    data = fetch_reddit_json.call(top_post_json_url).first['data']['children'].first['data']
+
     html = []
     html.push("<p>From r/#{subreddit}</p>")
-    html.push(top_post[:text]) unless top_post[:text].nil?
 
     # If post is just text, return it now
-    return html if top_post[:url] == item_url
+    text = Nokogiri::HTML.parse(data['selftext_html'])
+    html.push(text) unless text.nil?
+
+    return html if data['url'] == item_url
 
     # If post is video, embed it
-    if top_post[:video_preview]
-      html.push("<video><source src='#{top_post[:video_preview]}'></video>")
+    video_preview = data.dig('secure_media', 'reddit_video', 'fallback_url') ||
+                    data.dig('preview', 'reddit_video_preview', 'fallback_url')
+
+    if video_preview
+      html.push("<video><source src='#{video_preview}'></video>")
       return html
     end
 
     # If post is image, embed it
-    if Image_extensions.any? { |ext| Pathname(top_post[:url]).extname == ext }
-      html.push("<img src='#{top_post[:url]}'>")
+    if Image_extensions.any? { |ext| Pathname.new(data['url']).extname == ext }
+      html.push("<img src='#{data['url']}'>")
       return html
     end
 
+    # If post is gallery, embed all images
+    if data['is_gallery']
+      data['media_metadata'].each do |metadata|
+        html.push("<img src='#{metadata[1]['s']['u'].gsub('&amp;', '&')}'>")
+      end
+    end
+
     # If post is a URL
-    html.push("<a href='#{top_post[:url]}'>#{top_post[:url]}</a>")
+    html.push("<a href='#{data['url']}'>#{data['url']}</a>")
 
     html
   }.call.join
