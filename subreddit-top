@@ -47,13 +47,32 @@ Previous_newest_id = Previous_items.first['id']
 
 ########## EDIT ##########
 # Strategy for getting new items
+Image_extensions = ['.gif', '.jpg', '.png'].freeze
+User_agent = 'Listing top posts on a private RSS feed on linux:subreddittop:0.0.1 (no account)'
+
 Config_file = Feed_settings_dir.join('subreddits.txt')
 abort "Missing #{Config_file}" unless Config_file.file?
 
-Check_period = 'week'
-Subreddits = Config_file.readlines(chomp: true)
-Image_extensions = ['.gif', '.jpg', '.png']
-User_agent = 'Listing top posts on a private RSS feed on linux:subreddittop:0.0.1 (no account)'
+# Config file should be of the form (one per line):
+# subreddit_name | check_period
+# Example:
+# wallpapers | day
+# surrealism | month
+# check period should be one ofs#{check_periods} and defaults to #{default_period}
+
+Subreddits = lambda {
+  check_periods = %w[day week month year all].freeze
+  default_period = 'week'
+
+  lines = Config_file.readlines(chomp: true)
+
+  lines.each_with_object({}) { |line, hash|
+    subreddit, check_in = line.split('|').map(&:strip)
+    period = check_periods.include?(check_in) ? check_in : default_period
+
+    hash[subreddit] = period
+  }
+}.call
 
 fetch_reddit_json = lambda { |user_agent, url|
   begin
@@ -79,11 +98,11 @@ fetch_reddit_json = lambda { |user_agent, url|
   end
 }.curry.call(User_agent)
 
-New_items = Subreddits.each_with_object([]) do |subreddit, array|
+New_items = Subreddits.each_with_object([]) { |(subreddit, period), array|
   warn "Checking #{subreddit}…"
   sleep 3 # Avoid rate limiting
 
-  sub_url = URI.parse("https://www.reddit.com/r/#{subreddit}/top.json?t=#{Check_period}&limit=1")
+  sub_url = URI.parse("https://www.reddit.com/r/#{subreddit}/top.json?t=#{period}&limit=1")
 
   top_item = fetch_reddit_json.call(sub_url)['data']['children'].first['data']
   item_url = URI.join(Site_url, top_item['permalink'].split('/').map { |a| CGI.escape(a) }.join('/'))
@@ -131,7 +150,7 @@ New_items = Subreddits.each_with_object([]) do |subreddit, array|
   }.call.join
 
   array.push(title: item_title, id: item_url, url: item_url, content_html: content)
-end
+}
 
 ########## LEAVE ##########
 # If there are no new items, inform and exit
