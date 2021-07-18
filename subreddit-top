@@ -149,7 +149,7 @@ New_items = Subreddits.each_with_object([]) { |(subreddit, period), array|
     html
   }.call.join
 
-  array.push(title: item_title, id: item_url, url: item_url, content_html: content)
+  array.push(title: item_title, id: item_url, url: "#{item_url}.compact", content_html: content)
 }
 
 ########## LEAVE ##########
