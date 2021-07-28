@@ -138,8 +138,11 @@ New_items = Subreddits.each_with_object([]) { |(subreddit, period), array|
 
     # If post is gallery, embed all images
     if data['is_gallery']
-      data['media_metadata'].each do |metadata|
-        html.push("<img src='#{metadata[1]['s']['u'].gsub('&amp;', '&')}'>")
+      data['gallery_data']['items'].map { |item| item['media_id'] }.each do |id|
+        item = data['media_metadata'].find { |metadata| metadata[1]['id'] == id }[1]
+        url = item['s']['u'].gsub('&amp;', '&')
+
+        html.push("<img src='#{url}'>")
       end
     end
 
